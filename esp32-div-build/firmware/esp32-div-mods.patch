@@ -1,0 +1,376 @@
+diff --git a/ESP32-DIV/ESP32-DIV.ino b/ESP32-DIV/ESP32-DIV.ino
+index 8c5e6eb..1f3d829 100644
+--- a/ESP32-DIV/ESP32-DIV.ino
++++ b/ESP32-DIV/ESP32-DIV.ino
+@@ -10,6 +10,7 @@
+ #include "ir.h"
+ #include "gps.h"
+ #include "rfid.h"
++#include "radar.h"
+ #include "shared.h"
+ #include "utils.h"
+ 
+@@ -94,15 +95,16 @@ static constexpr uint8_t OTHER_LAYER_IR   = 1;
+ static constexpr uint8_t OTHER_LAYER_RFID = 2;
+ static constexpr uint8_t OTHER_LAYER_GPS  = 3;
+ 
+-const int other_NUM_SUBMENU_ITEMS = 4;
++const int other_NUM_SUBMENU_ITEMS = 5;
+ static constexpr int OTHER_GRID_COLS = 2;
+ const char *other_submenu_items[other_NUM_SUBMENU_ITEMS] = {
+     "IR Remote",
+     "RFID/NFC",
+     "GPS",
++    "Radar",
+     "Main Menu"};
+ 
+-const int rfid_NUM_SUBMENU_ITEMS = 9;
++const int rfid_NUM_SUBMENU_ITEMS = 10;
+ const char *rfid_submenu_items[rfid_NUM_SUBMENU_ITEMS] = {
+     "Card Reader",
+     "Card Clone",
+@@ -112,6 +114,7 @@ const char *rfid_submenu_items[rfid_NUM_SUBMENU_ITEMS] = {
+     "Jam Reader",
+     "Tag Disrupt",
+     "Disrupt Emulate",
++    "Read & Write",
+     "Back to Main Menu"};
+ 
+ const int gps_NUM_SUBMENU_ITEMS = 3;
+@@ -190,6 +193,7 @@ const unsigned char *other_submenu_icons[other_NUM_SUBMENU_ITEMS] = {
+     bitmap_icon_led,
+     bitmap_icon_rfid_chip,
+     bitmap_icon_satellite,
++    bitmap_icon_rss,
+     bitmap_icon_go_back
+ };
+ 
+@@ -202,6 +206,7 @@ const unsigned char *rfid_submenu_icons[rfid_NUM_SUBMENU_ITEMS] = {
+     bitmap_icon_kill,
+     bitmap_icon_flash,
+     bitmap_icon_devil,
++    bitmap_icon_save,
+     bitmap_icon_go_back
+ };
+ 
+@@ -2486,6 +2491,17 @@ static void otherRfidReturnGuard() {
+     delay(120);
+ }
+ 
++static void otherRadarAction() {
++    feature_active = true;
++    feature_exit_requested = false;
++    setTouchButtonInputEnabled(true);
++    RadarVitals::session();
++    otherRfidReturnGuard();
++    submenu_initialized = false;
++    displaySubmenu();
++    feature_active = false;
++}
++
+ static void otherRfidPlaceholderAction(int idx) {
+     feature_active = true;
+     if (!RfidNfc::begin()) {
+@@ -2523,6 +2539,9 @@ static void otherRfidPlaceholderAction(int idx) {
+             case 7:
+                 RfidNfc::sessionDisruptEmulate();
+                 break;
++            case 8:
++                RfidNfc::sessionReadWrite();
++                break;
+             default:
+                 feature_active = false;
+                 restoreSdAfterSharedSpi();
+@@ -2675,6 +2694,8 @@ void handleOtherSubmenuButtons() {
+                 updateActiveSubmenu();
+                 submenu_initialized = false;
+                 displaySubmenu();
++            } else if (current_submenu_index == 3) {
++                otherRadarAction();
+             }
+         } else if (other_layer == OTHER_LAYER_IR) {
+             if (current_submenu_index == ir_NUM_SUBMENU_ITEMS - 1) {
+@@ -2893,6 +2914,8 @@ void handleOtherSubmenuButtons() {
+                 updateActiveSubmenu();
+                 submenu_initialized = false;
+                 displaySubmenu();
++            } else if (current_submenu_index == 3) {
++                otherRadarAction();
+             }
+         } else if (other_layer == OTHER_LAYER_IR) {
+             if (current_submenu_index == ir_NUM_SUBMENU_ITEMS - 1) {
+diff --git a/ESP32-DIV/radar.cpp b/ESP32-DIV/radar.cpp
+new file mode 100644
+index 0000000..df270cc
+--- /dev/null
++++ b/ESP32-DIV/radar.cpp
+@@ -0,0 +1,93 @@
++#include "radar.h"
++
++#include <Arduino.h>
++#include "DFRobot_HumanDetection.h"   // Install "DFRobot_HumanDetection"
++
++#include "Touchscreen.h"
++#include "utils.h"      // tft, isButtonPressed, maintainTouchNavBar, BTN_*
++#include "shared.h"     // colors, UI palette, feature_exit_requested
++
++/* ─── UART pins for the C1001 ────────────────────────────────────────────
++ * IMPORTANT: set these to TWO FREE GPIOs on your board. The defaults below
++ * are placeholders — the ESP32-DIV V2 already uses many pins, so pick pins
++ * that are not driving the display/SD/RF/expander. If you don't use GPS,
++ * its UART pins (GPS_UART_RX / GPS_UART_TX) are a good candidate.
++ */
++#ifndef RADAR_RX
++#define RADAR_RX 44   // ESP RX  <- C1001 TX   (CHANGE ME)
++#endif
++#ifndef RADAR_TX
++#define RADAR_TX 43   // ESP TX  -> C1001 RX   (CHANGE ME)
++#endif
++
++static DFRobot_HumanDetection s_hu(&Serial1);
++
++namespace RadarVitals {
++
++static bool radarExit() {
++  return feature_exit_requested ||
++         isButtonPressed(BTN_LEFT) || isButtonPressed(BTN_SELECT);
++}
++
++void session() {
++  Serial1.begin(115200, SERIAL_8N1, RADAR_RX, RADAR_TX);
++
++  tft.fillScreen(FEATURE_BG);
++  tft.setTextColor(UI_TEXT, FEATURE_BG);
++  tft.setTextSize(2);
++  tft.setCursor(10, 30);
++  tft.print("Radar init...");
++
++  if (s_hu.begin() != 0) {
++    tft.fillScreen(FEATURE_BG);
++    tft.setTextColor(RED, FEATURE_BG);
++    tft.setTextSize(2);
++    tft.setCursor(10, 40);
++    tft.print("C1001 not found");
++    tft.setTextSize(1);
++    tft.setTextColor(UI_DIM_TEXT, FEATURE_BG);
++    tft.setCursor(10, 75);
++    tft.print("Check UART wiring / power and RADAR_RX/TX pins.");
++    while (!radarExit()) { maintainTouchNavBar(); delay(20); }
++    return;
++  }
++
++  // Sleep/vitals mode exposes presence + heart rate + breathing + sleep state.
++  s_hu.configWorkMode(s_hu.eSleepMode);
++
++  tft.fillScreen(FEATURE_BG);
++  unsigned long last = 0;
++  while (!radarExit()) {
++    maintainTouchNavBar();
++    if (millis() - last > 800) {
++      last = millis();
++
++      int present    = s_hu.smHumanData(s_hu.eHumanPresence);   // 0/1
++      int heart      = s_hu.getHeartRate();                     // bpm
++      int breathe    = s_hu.getBreatheValue();                  // rpm
++      int sleepState = s_hu.smSleepData(s_hu.eSleepState);      // 0/1/2/3
++
++      // 0 deep, 1 light -> ASLEEP;  2 -> AWAKE;  else unknown
++      const char* stateLbl =
++          (sleepState == 2)                     ? "AWAKE " :
++          (sleepState == 0 || sleepState == 1)  ? "ASLEEP" : "--    ";
++
++      tft.setTextSize(2);
++      tft.setTextColor(UI_TEXT, FEATURE_BG);
++      tft.setCursor(10, 16);  tft.print("Radar Vitals");
++      tft.setTextColor(present ? GREEN : UI_DIM_TEXT, FEATURE_BG);
++      tft.setCursor(10, 56);  tft.printf("Present: %s", present ? "YES" : "no ");
++      tft.setTextColor(UI_TEXT, FEATURE_BG);
++      tft.setCursor(10, 92);  tft.printf("Heart : %3d bpm", heart);
++      tft.setCursor(10, 128); tft.printf("Breath: %3d rpm", breathe);
++      tft.setCursor(10, 164); tft.printf("State : %s", stateLbl);
++
++      tft.setTextSize(1);
++      tft.setTextColor(UI_DIM_TEXT, FEATURE_BG);
++      tft.setCursor(10, 210); tft.print("Back / LEFT = exit");
++    }
++    delay(10);
++  }
++}
++
++} // namespace RadarVitals
+diff --git a/ESP32-DIV/radar.h b/ESP32-DIV/radar.h
+new file mode 100644
+index 0000000..3e62127
+--- /dev/null
++++ b/ESP32-DIV/radar.h
+@@ -0,0 +1,20 @@
++#pragma once
++
++/**
++ * Radar / Vitals — DFRobot C1001 (SEN0623, 60GHz mmWave).
++ * Shows human presence, heart rate, breathing rate and sleep state
++ * (asleep / awake) on the TFT. Requires the "DFRobot_HumanDetection" library.
++ *
++ * Wire the C1001 to a FREE UART on your board and set RADAR_RX / RADAR_TX
++ * (see radar.cpp). On the ESP32-DIV V2 most GPIOs are taken — free two pins
++ * (e.g. repurpose the GPS UART if you are not using GPS).
++ *
++ * NOTE: C4001 (24GHz) does NOT provide heart rate or sleep state — presence
++ * only. Use C1001 for the vitals/sleep screen below.
++ */
++namespace RadarVitals {
++
++// Blocking feature screen; returns when the user presses Back / LEFT.
++void session();
++
++} // namespace RadarVitals
+diff --git a/ESP32-DIV/rfid.cpp b/ESP32-DIV/rfid.cpp
+index 66fa216..b2f9138 100644
+--- a/ESP32-DIV/rfid.cpp
++++ b/ESP32-DIV/rfid.cpp
+@@ -2527,6 +2527,129 @@ void sessionClone() {
+   rfidResultAndDismiss("Clone", "Done", summary);
+ }
+ 
++/*
++ * Read & Write — quick "swipe" UID clone.
++ *
++ * Optimised for the common access-fob case: capture a source MIFARE Classic
++ * tag's UID (block 0), then program it onto a Gen2 "magic" blank card in one
++ * short flow. For full-memory copies of Ultralight / NTAG tags, use the
++ * existing "Card Clone" flow instead.
++ *
++ * NOTE ON RANGE: this uses the same PN532 13.56 MHz coil as every other RFID
++ * tool here. Practical read range is ~2-5 cm (7 cm at best with a good coil).
++ * "Swipe" here means a slow, close pass over the coil — not a 10-20 cm read,
++ * which is not physically possible at this frequency.
++ */
++void sessionReadWrite() {
++  uint8_t uid[7] = {0};
++  uint8_t uidLength = 0;
++  uint8_t keyA[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
++  uint8_t keyB[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
++  uint8_t keyZero[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
++  uint8_t block0[16] = {0};
++  uint8_t srcUid[7] = {0};
++  uint8_t srcUidLen = 0;
++
++  static const char kIntro[] =
++      "Quick UID clone.\n\n"
++      "Step 1/3: swipe the SOURCE fob/card slowly across the coil. "
++      "Keep it flat and close (best under ~3 cm).";
++
++  rfidAttachBus();
++  if (!rfidListenIso14443a("Read & Write", "Cancel", uid, &uidLength,
++                           (unsigned long)RFID_CLONE_PHASE_TIMEOUT_MS,
++                           "Step 1/3 — Swipe SOURCE tag", kIntro)) {
++    rfidRestoreBus();
++    return;
++  }
++
++  memcpy(srcUid, uid, uidLength);
++  srcUidLen = uidLength;
++  char uidStr[24] = "";
++  uidToHex(uidStr, sizeof(uidStr), srcUid, srcUidLen);
++
++  CardType ct = detectCardType(uid, uidLength);
++  rfidSetDynamicPill("OK", UI_OK);
++  rfidSetBandAux(nullptr);
++  rfidDynamicBand(0, "Source captured", uidStr);
++  rfidPrint(String("[+] Source ") + uidStr + "  " + cardTypeStr(ct), UI_OK, false);
++
++  if (ct != MIFARE_CLASSIC) {
++    rfidRestoreBus();
++    rfidResultAndDismiss("Read & Write", "Use Card Clone",
++                         "Quick UID clone supports MIFARE Classic magic cards.\n\n"
++                         "For Ultralight / NTAG use 'Card Clone' (full data copy).");
++    return;
++  }
++
++  bool haveBlock0 = false;
++  if (s_nfc.mifareclassic_AuthenticateBlock(uid, uidLength, 0, 0, keyA) &&
++      s_nfc.mifareclassic_ReadDataBlock(0, block0)) {
++    haveBlock0 = true;
++  }
++  rfidRestoreBus();
++
++  static const char kBlankInfo[] =
++      "Step 2/3: remove the source tag.\n\n"
++      "Step 3/3: present a blank Gen2 \"magic\" MIFARE Classic card. "
++      "Writing starts automatically once it is detected.";
++
++  rfidAttachBus();
++  if (!rfidListenIso14443a("Read & Write", "Cancel", uid, &uidLength,
++                           (unsigned long)RFID_CLONE_PHASE_TIMEOUT_MS,
++                           "Step 3/3 — Present BLANK magic card", kBlankInfo)) {
++    rfidRestoreBus();
++    return;
++  }
++
++  char blankStr[24] = "";
++  uidToHex(blankStr, sizeof(blankStr), uid, uidLength);
++  rfidSetDynamicPill("OK", UI_OK);
++  rfidSetBandAux(nullptr);
++  rfidDynamicBand(0, "Blank detected", blankStr);
++  rfidPrint(String("[+] Blank ") + blankStr, UI_OK, false);
++
++  bool magic = tryMagicBackdoor();
++
++  uint8_t block0Data[16];
++  if (haveBlock0) {
++    memcpy(block0Data, block0, 16);
++  } else {
++    memset(block0Data, 0, sizeof(block0Data));
++    memcpy(block0Data, srcUid, srcUidLen);
++    block0Data[4] =
++        (uint8_t)(block0Data[0] ^ block0Data[1] ^ block0Data[2] ^ block0Data[3]);
++  }
++
++  bool wrote = false;
++  bool auth = s_nfc.mifareclassic_AuthenticateBlock(uid, uidLength, 0, 0, keyA);
++  if (!auth) {
++    auth = s_nfc.mifareclassic_AuthenticateBlock(uid, uidLength, 0, 1, keyB);
++  }
++  if (!auth) {
++    auth = s_nfc.mifareclassic_AuthenticateBlock(uid, uidLength, 0, 0, keyZero);
++  }
++  if (auth && s_nfc.mifareclassic_WriteDataBlock(0, block0Data)) {
++    wrote = true;
++  }
++  rfidRestoreBus();
++
++  char summary[360];
++  const char* fw = s_pn532VerStr[0] ? s_pn532VerStr : "PN532";
++  snprintf(summary, sizeof(summary),
++           "%s\n\n"
++           "Source UID: %s\n"
++           "Blank UID:    %s\n"
++           "Reader IC:    %s\n"
++           "Gen2 magic:   %s\n"
++           "UID block write: %s\n\n"
++           "Verify by re-scanning with Card Reader.",
++           wrote ? "UID written to blank." : "UID write failed.",
++           uidStr, blankStr, fw, magic ? "detected" : "not detected",
++           wrote ? "OK" : "failed");
++  rfidResultAndDismiss("Read & Write", wrote ? "Done" : "Failed", summary);
++}
++
+ void sessionTagDisrupt() {
+   static const char kIntro[] =
+       "Writes sector trailer blocks on MIFARE Classic (default key A).\n"
+diff --git a/ESP32-DIV/rfid.h b/ESP32-DIV/rfid.h
+index 57f92c7..d05e3cd 100644
+--- a/ESP32-DIV/rfid.h
++++ b/ESP32-DIV/rfid.h
+@@ -22,6 +22,11 @@ bool consumeSessionRetry();
+ 
+ void sessionCardReader();
+ void sessionClone();
++
++/** Quick "swipe" UID clone: capture a source fob/card, then program a Gen2
++ *  "magic" MIFARE Classic blank in one guided flow (fob-clone use case). */
++void sessionReadWrite();
++
+ void sessionErase();
+ void sessionDump();
+ void sessionDecodeAccess();

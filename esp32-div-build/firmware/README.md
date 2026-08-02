@@ -1,8 +1,26 @@
-# فریمور — افزودن گزینه‌ی «Read & Write» به منوی RFID
+# فریمور — تغییرات ESP32-DIV
 
-## این پچ چه‌کار می‌کند؟
+پچ اصلی: **`esp32-div-mods.patch`** (شامل هر دو مورد زیر). اعمال روی مخزن اصلی:
+```bash
+git clone https://github.com/cifertech/ESP32-DIV.git && cd ESP32-DIV
+git apply /path/to/esp32-div-mods.patch
+```
+تست شده که تمیز apply می‌شود. حتماً در Arduino IDE یک‌بار Verify/Compile بگیر
+(در این محیط امکان کامپایل سخت‌افزاری نبود).
 
-یک گزینه‌ی جدید به نام **`Read & Write`** به منوی `RFID/NFC` اضافه می‌کند:
+این پچ دو چیز اضافه می‌کند:
+1. گزینه‌ی **`Read & Write`** در منوی RFID (کلون سریع UID).
+2. گزینه‌ی **`Radar`** در منوی Other (نمایش حضور/ضربان/تنفس/خواب از C1001).
+   > برای رادار کتابخانه‌ی **`DFRobot_HumanDetection`** را نصب کن و پین‌های
+   > `RADAR_RX/RADAR_TX` را در `radar.cpp` روی دو GPIO آزاد بگذار.
+
+اسکچ‌های مستقل قابل‌تست هم هست: `radar_c1001/` (رادار) و `pn5180_reader/` (PN5180).
+جزئیات ارتقای PN5180 در `radar-integration.md`.
+
+---
+
+## گزینه‌ی «Read & Write»
+
 یک فلوی سریع سه‌مرحله‌ای برای **کلون UID فوب/کارت** روی کارت خام Gen2 «magic»
 (کاربرد رایج: کپی کارت اکسس آپارتمان).
 
@@ -30,14 +48,6 @@
 `tryMagicBackdoor`, `mifareclassic_*`, `rfidResultAndDismiss`, ...) استفاده می‌کند تا
 ریسک کامپایل کم باشد. **قابلیت‌های قبلی دست‌نخورده‌اند** (فقط اضافه شده).
 
-## اعمال پچ
-
-```bash
-git clone https://github.com/cifertech/ESP32-DIV.git
-cd ESP32-DIV
-git apply /path/to/rfid_readwrite.patch      # یا: patch -p1 < rfid_readwrite.patch
-```
-
 سپس در Arduino IDE:
 - برد: **ESP32S3 Dev Module**
 - کتابخانه‌ها طبق پوشه‌ی `Libraries` مخزن + **Adafruit PN532**
@@ -50,5 +60,5 @@ git apply /path/to/rfid_readwrite.patch      # یا: patch -p1 < rfid_readwrite.
 ## بازگردانی
 
 ```bash
-git apply -R rfid_readwrite.patch
+git apply -R esp32-div-mods.patch
 ```
