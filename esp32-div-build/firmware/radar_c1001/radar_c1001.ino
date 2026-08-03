@@ -24,8 +24,8 @@
  * WIRING (pick spare pins on your board; UART2 shown)
  *   C1001 TX -> ESP RX (GPIO 18 here)      C1001 5V -> 5V
  *   C1001 RX -> ESP TX (GPIO 17 here)      C1001 GND -> GND
- *   NOTE: on the ESP32-DIV V2 the GPS already uses UART2 (47/48). Give the
- *   radar its own free pins/UART and update RADAR_RX/RADAR_TX accordingly.
+ *   NOTE: pins 47/48 are the ESP32-DIV V2 GPS UART. Since this build drops GPS,
+ *   the radar reuses them. If you keep GPS, move the radar to other free pins.
  *
  * RESPONSIBLE USE
  *   Vitals/sleep sensing should only be used on people who have consented.
@@ -33,8 +33,9 @@
 
 #include "DFRobot_HumanDetection.h"
 
-#define RADAR_RX 18   // ESP RX  <- C1001 TX
-#define RADAR_TX 17   // ESP TX  -> C1001 RX
+// On the ESP32-DIV V2 without GPS, the freed GPS UART pins (47/48) are ideal.
+#define RADAR_RX 47   // ESP RX  <- C1001 TX
+#define RADAR_TX 48   // ESP TX  -> C1001 RX
 
 DFRobot_HumanDetection hu(&Serial1);
 

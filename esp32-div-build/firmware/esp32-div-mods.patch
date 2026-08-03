@@ -101,10 +101,10 @@ index 8c5e6eb..1f3d829 100644
              if (current_submenu_index == ir_NUM_SUBMENU_ITEMS - 1) {
 diff --git a/ESP32-DIV/radar.cpp b/ESP32-DIV/radar.cpp
 new file mode 100644
-index 0000000..df270cc
+index 0000000..a6a2e09
 --- /dev/null
 +++ b/ESP32-DIV/radar.cpp
-@@ -0,0 +1,93 @@
+@@ -0,0 +1,96 @@
 +#include "radar.h"
 +
 +#include <Arduino.h>
@@ -120,11 +120,14 @@ index 0000000..df270cc
 + * that are not driving the display/SD/RF/expander. If you don't use GPS,
 + * its UART pins (GPS_UART_RX / GPS_UART_TX) are a good candidate.
 + */
++// Defaults reuse the ESP32-DIV V2 GPS UART pins (47/48). This is safe ONLY if
++// you are NOT using GPS — the radar and GPS cannot share these pins. Override
++// in build flags if your wiring differs.
 +#ifndef RADAR_RX
-+#define RADAR_RX 44   // ESP RX  <- C1001 TX   (CHANGE ME)
++#define RADAR_RX 47   // ESP RX  <- C1001 TX   (freed GPS pin on V2)
 +#endif
 +#ifndef RADAR_TX
-+#define RADAR_TX 43   // ESP TX  -> C1001 RX   (CHANGE ME)
++#define RADAR_TX 48   // ESP TX  -> C1001 RX   (freed GPS pin on V2)
 +#endif
 +
 +static DFRobot_HumanDetection s_hu(&Serial1);
