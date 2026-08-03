@@ -1,0 +1,318 @@
+<title>راهنمای ساخت ESP32-DIV — از صفر</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --bg:#E9EAED; --surface:#fff; --surface-2:#F3F4F6; --ink:#191C20; --muted:#5C636E;
+  --line:#D7DADF; --accent:#DD5F18; --accent-ink:#fff;
+  --easy:#2E7D46; --med:#B0731A; --hard:#C23A2B;
+  --easy-bg:#E7F1EA; --med-bg:#F6EDDD; --hard-bg:#F6E3E0;
+  --radius:14px; --maxw:820px;
+  --f-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,"Vazirmatn",Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#121418; --surface:#1A1D22; --surface-2:#22262C; --ink:#EDEFF2; --muted:#98A0AC;
+    --line:#2C313A; --accent:#F2731F;
+    --easy:#54B570; --med:#E0A33C; --hard:#E4705B;
+    --easy-bg:#16261C; --med-bg:#2A2415; --hard-bg:#2A1A17;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121418; --surface:#1A1D22; --surface-2:#22262C; --ink:#EDEFF2; --muted:#98A0AC;
+  --line:#2C313A; --accent:#F2731F;
+  --easy:#54B570; --med:#E0A33C; --hard:#E4705B;
+  --easy-bg:#16261C; --med-bg:#2A2415; --hard-bg:#2A1A17;
+}
+:root[data-theme="light"]{
+  --bg:#E9EAED; --surface:#fff; --surface-2:#F3F4F6; --ink:#191C20; --muted:#5C636E;
+  --line:#D7DADF; --accent:#DD5F18;
+  --easy:#2E7D46; --med:#B0731A; --hard:#C23A2B;
+  --easy-bg:#E7F1EA; --med-bg:#F6EDDD; --hard-bg:#F6E3E0;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{
+  margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-sans);
+  direction:rtl;line-height:1.7;-webkit-font-smoothing:antialiased;
+  font-size:16px;
+}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 18px 80px}
+
+/* header */
+header{
+  position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
+}
+.hbar{max-width:var(--maxw);margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:14px}
+.brand{display:flex;flex-direction:column;gap:2px;margin-inline-end:auto}
+.brand b{font-size:1.02rem;font-weight:800;letter-spacing:-.01em}
+.brand span{font-size:.74rem;color:var(--muted);letter-spacing:.02em}
+.progress{display:flex;align-items:center;gap:9px;font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.pbar{width:74px;height:7px;border-radius:99px;background:var(--surface-2);overflow:hidden;border:1px solid var(--line)}
+.pbar i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s ease}
+.tgl{border:1px solid var(--line);background:var(--surface);color:var(--ink);width:38px;height:34px;border-radius:10px;cursor:pointer;font-size:1rem;display:grid;place-items:center}
+.tgl:focus-visible,a:focus-visible,.chk:focus-within{outline:2.5px solid var(--accent);outline-offset:2px}
+
+/* hero */
+.hero{padding:40px 0 8px}
+.eyebrow{font-size:.76rem;font-weight:700;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.15;margin:.35em 0 .3em;font-weight:850;letter-spacing:-.02em;text-wrap:balance}
+.lede{font-size:1.06rem;color:var(--muted);max-width:60ch}
+
+/* callout */
+.note{background:var(--surface);border:1px solid var(--line);border-inline-start:4px solid var(--accent);
+  border-radius:12px;padding:15px 17px;margin:22px 0;font-size:.95rem}
+.note b{color:var(--ink)}
+
+/* phase cards */
+.phase{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  margin:20px 0;overflow:hidden}
+.phead{display:flex;align-items:center;gap:13px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.pnum{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:.98rem}
+.p1 .pnum{background:var(--easy-bg);color:var(--easy)} .p1{border-top:3px solid var(--easy)}
+.p2 .pnum{background:var(--med-bg);color:var(--med)} .p2{border-top:3px solid var(--med)}
+.p3 .pnum{background:var(--hard-bg);color:var(--hard)} .p3{border-top:3px solid var(--hard)}
+.ptitle{display:flex;flex-direction:column;gap:1px}
+.ptitle b{font-size:1.08rem;font-weight:800}
+.ptitle span{font-size:.78rem;color:var(--muted)}
+.pill{margin-inline-start:auto;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:99px}
+.p1 .pill{background:var(--easy-bg);color:var(--easy)}
+.p2 .pill{background:var(--med-bg);color:var(--med)}
+.p3 .pill{background:var(--hard-bg);color:var(--hard)}
+.pbody{padding:6px 18px 16px}
+
+/* checklist */
+.chk{display:flex;gap:12px;align-items:flex-start;padding:12px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+.chk:last-child{border-bottom:0}
+.chk input{position:absolute;opacity:0;width:0;height:0}
+.box{flex:none;width:22px;height:22px;margin-top:2px;border:2px solid var(--line);border-radius:7px;display:grid;place-items:center;transition:all .15s;background:var(--surface-2)}
+.chk input:checked + .box{background:var(--accent);border-color:var(--accent)}
+.box svg{width:13px;height:13px;stroke:#fff;stroke-width:3.2;fill:none;opacity:0;transition:opacity .15s}
+.chk input:checked + .box svg{opacity:1}
+.citem{display:flex;flex-direction:column;gap:2px}
+.chk input:checked ~ .citem .cname{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.cname{font-weight:650}
+.cname .q{font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+.cdesc{font-size:.85rem;color:var(--muted)}
+
+h2{font-size:1.35rem;font-weight:800;letter-spacing:-.01em;margin:38px 0 6px;padding-top:10px}
+.sub{color:var(--muted);font-size:.92rem;margin:0 0 6px}
+
+/* steps */
+.step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.step:last-child{border-bottom:0}
+.sn{flex:none;width:30px;height:30px;border-radius:9px;background:var(--surface-2);border:1px solid var(--line);
+  display:grid;place-items:center;font-weight:800;font-size:.9rem;color:var(--accent);font-variant-numeric:tabular-nums}
+.stext b{display:block;margin-bottom:2px}
+.stext span{color:var(--muted);font-size:.93rem}
+.stext code,code.inl{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:.85em;direction:ltr;display:inline-block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:8px 18px;margin:14px 0}
+
+/* table */
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:420px}
+th,td{text-align:right;padding:11px 14px;border-bottom:1px solid var(--line)}
+th{background:var(--surface-2);font-weight:700;font-size:.82rem;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:650}
+
+.foot{text-align:center;color:var(--muted);font-size:.85rem;margin-top:40px;padding-top:20px;border-top:1px solid var(--line)}
+.reset{background:none;border:1px solid var(--line);color:var(--muted);border-radius:9px;padding:7px 14px;cursor:pointer;font-family:inherit;font-size:.82rem}
+</style>
+
+<header>
+  <div class="hbar">
+    <div class="brand"><b>ساخت ESP32-DIV</b><span>راهنمای خرید و مونتاژ — از صفر</span></div>
+    <div class="progress" title="پیشرفت خرید">
+      <span id="pcount">۰ / ۰</span>
+      <div class="pbar"><i id="pfill"></i></div>
+    </div>
+    <button class="tgl" id="tgl" aria-label="تغییر تم">◐</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">اولین پروژه • برای سرگرمی</div>
+    <h1>یک قدم‌به‌قدمِ صادقانه برای ساختن دستگاهت</h1>
+    <p class="lede">هیچ سابقه‌ای لازم نیست. با آرامش پیش می‌رویم؛ تیک‌ها ذخیره می‌شوند تا موقع خرید و ساخت گم نشوی.</p>
+  </section>
+
+  <div class="note">
+    <b>مهم:</b> نسخه‌ی کامل این دستگاه یک پروژه‌ی <b>متوسط‌روبه‌بالا</b>ست، نه پروژه‌ی «اولین‌بار».
+    برای همین کار را به <b>سه فاز</b> شکستیم تا از همان اول یک چیز کارکننده داشته باشی و سختی‌ها را پله‌پله جلو بروی.
+    <br><b>پیشنهاد من: فعلاً فقط خریدهای فاز ۱ را بگیر.</b>
+  </div>
+
+  <!-- PHASE 1 -->
+  <section class="phase p1">
+    <div class="phead"><div class="pnum">۱</div>
+      <div class="ptitle"><b>هسته — همین‌ها را اول بخر</b><span>یک دستگاه لمسی کارکننده، تقریباً بدون لحیم</span></div>
+      <div class="pill">آسان</div>
+    </div>
+    <div class="pbody" data-list>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">۱×</span> برد ESP32-S3 (DevKitC-1، N16R8)</span><span class="cdesc">مغز دستگاه. حتماً «S3» — نه ESP32 معمولی.</span></span></label>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">۱×</span> نمایشگر ILI9341 ۲.۸ اینچ تاچ</span><span class="cdesc">ماژول قرمز رایج، با درایور تاچ XPT2046.</span></span></label>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">۱+</span> بِردبورد + سیم جامپر نر-به-ماده</span><span class="cdesc">برای تست بدون لحیم؛ برای شروع عالی.</span></span></label>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">۱×</span> کابل USB مناسب برد (معمولاً USB-C)</span><span class="cdesc">برای برق و فلش کردن.</span></span></label>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">۱×</span> کارت microSD ۸–۳۲GB + رم‌ریدر</span><span class="cdesc">ذخیره‌ی لاگ‌ها و اسکریپت‌ها.</span></span></label>
+    </div>
+  </section>
+
+  <!-- PHASE 2 -->
+  <section class="phase p2">
+    <div class="phead"><div class="pnum">۲</div>
+      <div class="ptitle"><b>RFID و رادار</b><span>خواندن/کپی کارت + سنسور حضور و ضربان</span></div>
+      <div class="pill">متوسط</div>
+    </div>
+    <div class="pbody" data-list>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">۱×</span> PN532 (نسخه‌ی آبی V3، حالت SPI)</span><span class="cdesc">کارت‌خوان. برای شروع از PN532 برو؛ کدش آماده است.</span></span></label>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">۱×</span> رادار DFRobot C1001 (SEN0623)</span><span class="cdesc">حضور + ضربان + خواب/بیداری. وارداتی و کمی گران.</span></span></label>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">چند</span> کارت/تگ RFID خام «magic» (Gen2)</span><span class="cdesc">برای تمرین کپی UID.</span></span></label>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">اختیاری</span> PN5180 (برای بردِ بیشتر، بعداً)</span><span class="cdesc">اول PN532 را راه بینداز؛ PN5180 کد جدا می‌خواهد.</span></span></label>
+    </div>
+  </section>
+
+  <!-- PHASE 3 -->
+  <section class="phase p3">
+    <div class="phead"><div class="pnum">۳</div>
+      <div class="ptitle"><b>شیلد رادیویی، تغذیه و باکس</b><span>دستگاه کامل داخل باکس تاکتیکال</span></div>
+      <div class="pill">سخت</div>
+    </div>
+    <div class="pbody" data-list>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">۱ ست</span> برد اختصاصی ESP32-DIV V2 (Main + Shield)</span><span class="cdesc">از فایل‌های <code class="inl">PCB/v2/</code> مخزن، به JLCPCB بده.</span></span></label>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">۳×</span> nRF24L01+ (ترجیحاً PA/LNA با آنتن)</span><span class="cdesc">2.4GHz. خازن ۱۰µF روی تغذیه‌ی هرکدام.</span></span></label>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">۱×</span> CC1101 (نسخه‌ی ۴۳۳ مگاهرتز)</span><span class="cdesc">Sub-GHz (ریموت/گاراژ و…).</span></span></label>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">۱+۱</span> گیرنده IR (TSOP1838) + LED مادون‌قرمز</span><span class="cdesc">ضبط/ارسال کنترل.</span></span></label>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">۱×</span> باتری LiPo ۳۰۰۰mAh، ۴۰×۵۵mm</span><span class="cdesc">همان که خودت انتخاب کردی.</span></span></label>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">۱×</span> ماژول شارژر TP4056 (USB-C)</span><span class="cdesc">شارژ و تغذیه.</span></span></label>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">۱×</span> کلید کشویی روشن/خاموش</span><span class="cdesc">قطع/وصل باتری.</span></span></label>
+      <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+        <span class="citem"><span class="cname"><span class="q">۵+۵</span> کانکتور SMA + آنتن</span><span class="cdesc">۵ آنتن بالای دستگاه (۳ nRF + CC1101 + اصلی).</span></span></label>
+    </div>
+  </section>
+
+  <!-- TOOLS -->
+  <h2>ابزارهایی که لازم داری</h2>
+  <p class="sub">اگر نداری، این‌ها را هم به سبد خرید اضافه کن.</p>
+  <section class="phase"><div class="pbody" data-list>
+    <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+      <span class="citem"><span class="cname">هویه‌ی حرارت‌قابل‌تنظیم + نوک ریز</span><span class="cdesc">مهم‌ترین ابزار؛ هویه‌ی ارزانِ بی‌کیفیت کار را زجرآور می‌کند.</span></span></label>
+    <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+      <span class="citem"><span class="cname">سیم لحیم ۰.۶–۰.۸mm + فلاکس</span><span class="cdesc">نازک و دارای فلاکس.</span></span></label>
+    <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+      <span class="citem"><span class="cname">ویک/پمپ لحیم</span><span class="cdesc">برای رفع اشتباه‌های لحیم.</span></span></label>
+    <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+      <span class="citem"><span class="cname">مولتی‌متر</span><span class="cdesc">حالت «بوق/continuity» برای چک اتصال و ولتاژ.</span></span></label>
+    <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+      <span class="citem"><span class="cname">سیم‌چین، دم‌باریک، پیچ‌گوشتی ساعتی</span><span class="cdesc">کار عمومی و مونتاژ باکس.</span></span></label>
+    <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+      <span class="citem"><span class="cname">پیچ M2.5×۸ (۴×) و چند پیچ M2</span><span class="cdesc">بستن دو نیمه‌ی باکس و ماژول رادار.</span></span></label>
+    <label class="chk"><input type="checkbox"><span class="box"><svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3"/></svg></span>
+      <span class="citem"><span class="cname">پرینت STL باکس (اگر پرینتر نداری، سرویس پرینت)</span><span class="cdesc">با PETG یا PLA، لایه‌ی ۰.۲mm. در ایران فراوان.</span></span></label>
+  </div></section>
+
+  <!-- BUILD STEPS -->
+  <h2>ساخت — قدم به قدم</h2>
+
+  <div class="card">
+    <p class="sub" style="margin-top:12px"><b style="color:var(--easy)">فاز ۱ — دستگاه پایه را زنده کن</b></p>
+    <div class="step"><div class="sn">۱</div><div class="stext"><b>نمایشگر را با جامپر به ESP32 وصل کن.</b><span>هیچ لحیمی لازم نیست. جدول دقیق پین‌ها را من می‌دهم — فقط بگو کدام برد ESP32-S3 و نمایشگر را خریدی. عکس بگیر تا اگر جدا شد یادت بماند.</span></div></div>
+    <div class="step"><div class="sn">۲</div><div class="stext"><b>فریمور را از مرورگر فلش کن — بدون کدنویسی.</b><span>با Chrome/Edge برو به <code class="inl">cifertech.github.io/ESP32-DIV</code> ← Connect ← پورت برد ← Install. چند دقیقه صبر کن.</span></div></div>
+    <div class="step"><div class="sn">۳</div><div class="stext"><b>تست کن.</b><span>منوی لمسی باید روشن شود. WiFi Scanner را باز کن. اگر تا اینجا رسیدی، رسماً یک سازنده شدی.</span></div></div>
+  </div>
+
+  <div class="card">
+    <p class="sub" style="margin-top:12px"><b style="color:var(--med)">فاز ۲ — RFID و رادار</b></p>
+    <div class="step"><div class="sn">۴</div><div class="stext"><b>PN532 را روی حالت SPI بگذار و وصل کن.</b><span>دو کلید کوچک روی ماژول را روی SPI بگذار. در منو: <code class="inl">Other → RFID/NFC → Card Reader</code>، کارت بگذار، UID را ببین.</span></div></div>
+    <div class="step"><div class="sn">۵</div><div class="stext"><b>کد سفارشی (Read&amp;Write + Radar) را با Arduino IDE اضافه کن.</b><span>Arduino IDE + بردهای ESP32 + کتابخانه‌ها را نصب کن، پچ <code class="inl">esp32-div-mods.patch</code> را اعمال کن، Verify بعد Upload. هر خطا را برایم بفرست.</span></div></div>
+    <div class="step"><div class="sn">۶</div><div class="stext"><b>رادار C1001.</b><span>۴ سیم (5V, GND, TX↔RX). اول اسکچ <code class="inl">radar_c1001</code> را تنها فلش کن تا مطمئن شوی کار می‌کند، بعد نسخه‌ی داخل منو.</span></div></div>
+  </div>
+
+  <div class="card">
+    <p class="sub" style="margin-top:12px"><b style="color:var(--hard)">فاز ۳ — شیلد، تغذیه و باکس</b></p>
+    <div class="step"><div class="sn">۷</div><div class="stext"><b>برد رسمی را سفارش بده.</b><span>گربرهای <code class="inl">PCB/v2/</code> را در JLCPCB آپلود کن؛ اگر شد گزینه‌ی SMT Assembly را روشن کن تا قطعات ریز را خودشان لحیم کنند.</span></div></div>
+    <div class="step"><div class="sn">۸</div><div class="stext"><b>قطعات بزرگ را لحیم کن.</b><span>محل را ۱–۲ ثانیه گرم کن، بعد سیم لحیم را به «محل» بزن نه به هویه. لحیم خوب براق و صاف است. اول قطعات کوتاه، بعد بلندها.</span></div></div>
+    <div class="step"><div class="sn">۹</div><div class="stext"><b>تغذیه را وصل کن.</b><span>باتری ← TP4056 ← کلید ← برد. قطب‌ها (+/–) را اشتباه نزن؛ با مولتی‌متر چک کن.</span></div></div>
+    <div class="step"><div class="sn">۱۰</div><div class="stext"><b>مونتاژ باکس.</b><span>باتری در جای ۴۰×۵۵، شارژر رو به سوراخ USB پایین، رادار روی ۴ پایه‌ی بالای پشت، کویل RFID پشت ناحیه‌ی نازکِ جلو (زیر نمایشگر). دو نیمه را با ۴ پیچ M2.5 ببند.</span></div></div>
+    <div class="step"><div class="sn">۱۱</div><div class="stext"><b>آنتن‌ها.</b><span>۵ کانکتور SMA را در سوراخ‌های بالا سفت کن و به ماژول‌های رادیویی وصل کن.</span></div></div>
+  </div>
+
+  <!-- TROUBLESHOOT -->
+  <h2>عیب‌یابی رایج</h2>
+  <div class="tblwrap"><table>
+    <thead><tr><th>مشکل</th><th>احتمال زیاد</th></tr></thead>
+    <tbody>
+      <tr><td>برد روشن نمی‌شود</td><td>کابل USB فقط برق است نه دیتا؛ کابل دیگری امتحان کن.</td></tr>
+      <tr><td>نمایشگر سفید/سیاه</td><td>سیم‌های SPI جابه‌جا؛ جدول پین را دوباره چک کن.</td></tr>
+      <tr><td>تاچ کار نمی‌کند</td><td>در منوی Settings گزینه‌ی Touch Calibrate را بزن.</td></tr>
+      <tr><td>PN532 پیدا نمی‌شود</td><td>کلیدهای حالت روی SPI نیست، یا سیم SS/SCK اشتباه.</td></tr>
+      <tr><td>رادار عدد نمی‌دهد</td><td>TX/RX جابه‌جا (TX هرکدام به RX دیگری)، یا برق ۵V ندارد.</td></tr>
+      <tr><td>فلش مرورگری وصل نمی‌شود</td><td>از Chrome/Edge استفاده کن؛ درایور USB (CP210x/CH340) نصب کن.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note" style="margin-top:26px">
+    <b>قدم بعدی با هم:</b> فقط خریدهای فاز ۱ را بگیر. وقتی رسید، بگو کدام برد ESP32-S3 و نمایشگر را خریدی تا
+    <b>جدول دقیق سیم‌کشی پین‌به‌پین</b> را بدهم و تا روشن‌شدن اولین منو کنارت باشم. موفق باشی — این قرار است سرگرم‌کننده باشد. 🚀
+  </div>
+
+  <div class="foot">
+    <p>تیک‌های تو در همین مرورگر ذخیره می‌شوند.</p>
+    <button class="reset" id="reset">پاک کردن همه‌ی تیک‌ها</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement, tgl=document.getElementById('tgl');
+  var KEY='esp32div-build-checks';
+  // theme
+  try{var t=localStorage.getItem('esp32div-theme'); if(t)root.setAttribute('data-theme',t);}catch(e){}
+  tgl.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme');
+    if(!cur){cur=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';}
+    var nxt=cur==='dark'?'light':'dark';
+    root.setAttribute('data-theme',nxt);
+    try{localStorage.setItem('esp32div-theme',nxt);}catch(e){}
+  });
+  // checklist ids + persistence
+  var boxes=[].slice.call(document.querySelectorAll('.chk input'));
+  boxes.forEach(function(b,i){b.dataset.k='c'+i;});
+  var saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
+  boxes.forEach(function(b){ if(saved[b.dataset.k])b.checked=true; });
+  function fa(n){return String(n).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[d];});}
+  function upd(){
+    var done=boxes.filter(function(b){return b.checked;}).length;
+    document.getElementById('pcount').textContent=fa(done)+' / '+fa(boxes.length);
+    document.getElementById('pfill').style.width=(done/boxes.length*100)+'%';
+  }
+  function save(){
+    var o={}; boxes.forEach(function(b){if(b.checked)o[b.dataset.k]=1;});
+    try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}
+  }
+  boxes.forEach(function(b){b.addEventListener('change',function(){save();upd();});});
+  document.getElementById('reset').addEventListener('click',function(){
+    boxes.forEach(function(b){b.checked=false;}); save(); upd();
+  });
+  upd();
+})();
+</script>
