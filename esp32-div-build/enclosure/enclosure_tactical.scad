@@ -1,14 +1,13 @@
 // =====================================================================
-//  ESP32-DIV V2 "TACTICAL v3" — compact, button-less, no-GPS build
+//  ESP32-DIV V2 "TACTICAL v4" — compact, button-less, no-GPS, no-radar
 //  ---------------------------------------------------------------------
-//  Changes in v3 (per feedback):
-//   * Battery now 40 x 55 mm (3000 mAh) — smaller, frees space
-//   * Dedicated TP4056 charger bay, open, with its USB aligned to the
-//     bottom-edge cutout (no more wall blocking the charger)
-//   * USB-C cutout sized to a real USB-C port (was too big)
-//   * Radar bay is now an OPEN pocket reachable from inside the case, with
-//     mounting posts + a thin RF window — you can drop the module in
-//   * Narrower body (one-hand). GPS removed (radar reuses its UART).
+//  Changes in v4 (per feedback):
+//   * RADAR REMOVED — its bay is gone, so the body is shorter (126 -> 100 mm)
+//   * Battery 40 x 55 mm (3000 mAh)
+//   * Dedicated TP4056 charger bay, open, USB aligned to the bottom-edge cutout
+//   * USB-C cutout sized to a real USB-C port
+//   * PN5180/PN532 RFID coil window on the FRONT (tap card below the screen)
+//   * Narrower, shorter one-hand body. GPS + radar both dropped.
 //
 //  All key numbers are parameters. When you send the exact TP4056 model /
 //  photo I'll set tp_* to match it. Print a draft and check fit first.
@@ -23,10 +22,9 @@ $fn = 56;
 
 /* ---------------- Outer body ---------------- */
 ext_w       = 70;      // narrower (one-hand); display module ~50 wide
-// Height is set by stacking charger + battery + radar on the back (they each
-// need clear back-skin, so they can't overlap). 126 is the practical minimum
-// for those three; shrink only by moving/removing a module.
-ext_h       = 126;
+// With the radar gone, only charger + battery stack on the back, so the body
+// drops to ~100 mm — driven now by the 2.8" display (86 mm) plus margins.
+ext_h       = 100;
 wall        = 2.4;
 chamf       = 10;
 total_depth = 27;
@@ -41,7 +39,7 @@ bezel2_margin = 2.0; bezel2_depth = 0.6;
 
 /* ---------------- Battery bay: 40 x 55 mm 3000 mAh ---------------- */
 batt_w = 41; batt_l = 56; batt_t = 10;
-batt_center_dy = -8;           // battery centre offset from box centre (+ = up)
+batt_center_dy = 6;            // battery centre offset from box centre (+ = up)
 batt_wallh = batt_t + 1;
 
 /* ---------------- TP4056 charger bay (open, USB to bottom edge) ---------------- */
@@ -55,18 +53,15 @@ usb_w = 9.5; usb_h = 3.6;      // USB-C plug clearance
 usb_z = 6;                     // height of the port centre above the back floor
 usb_x = 0;                     // align to the TP4056 USB position (centred)
 
-/* ---------------- Radar bay (C1001 ~30x30) — OPEN, inside-accessible ---------------- */
-radar_w = 32; radar_h = 32; radar_wall = 0.8; radar_from_top = 5; radar_post = 1.2;
-
 /* ---------------- PCB standoffs (Main board) — TUNE to your holes ---------------- */
 standoff_h = 5; standoff_or = 3.2; standoff_ir = 1.3;
-pcb_hole_dx = 42; pcb_hole_dy = 70; pcb_center_dy = 4;
+pcb_hole_dx = 42; pcb_hole_dy = 58; pcb_center_dy = 6;
 
 /* ---------------- RFID coil window (PN5180 antenna) — on the FRONT ---------------- */
-// The back is full of battery/charger/radar, so the PN5180 coil lives on the
-// FRONT, below the screen: you tap the card on the lower front. Thinned skin
-// for good coupling. rfid_front_cy = centre offset (negative = below screen).
-rfid_zone_w = 44; rfid_zone_h = 40; rfid_front_cy = -30; rfid_wall = 1.0;
+// The back is full of battery/charger, so the RFID coil lives on the FRONT,
+// below the screen: you tap the card on the lower front. Thinned skin for good
+// coupling. rfid_front_cy = centre offset (negative = below screen).
+rfid_zone_w = 42; rfid_zone_h = 24; rfid_front_cy = -33; rfid_wall = 1.0;
 
 /* ---------------- Edge ports ---------------- */
 sd_w = 13.0; sd_h = 2.8; sd_from_top = 20;
@@ -161,10 +156,6 @@ module charger_bay() {
             cube([1.6, tp_l, tp_h]);
     posts(0, cy, tp_w, tp_l, tp_post);
 }
-module radar_bay() {
-    cy = ext_h/2 - wall - radar_from_top - radar_h/2;
-    posts(0, cy, radar_w, radar_h, radar_post);   // open pocket, drop module in from inside
-}
 module kickstand_wedge() {
     hull() {
         translate([0, -ext_h/2+wall+1, -ks_thick]) cube([ext_w-2*chamf-6, 2, 0.1], center=true);
@@ -181,14 +172,10 @@ module back_part() {
             inner_lip(lip_h);
             battery_bay();
             charger_bay();
-            radar_bay();
             standoffs_all();
             if (kickstand) kickstand_wedge();
         }
         // (RFID coil window is on the FRONT — see front_part)
-        // Radar thin RF window (module antenna sees out the back)
-        rcy = ext_h/2 - wall - radar_from_top - radar_h/2;
-        translate([0, rcy, radar_wall]) linear_extrude(wall) square([radar_w-6, radar_h-6], center=true);
         // USB-C cutout on the bottom edge, aligned to the TP4056 USB
         translate([usb_x, -ext_h/2 - 0.1, usb_z]) rotate([-90,0,0]) linear_extrude(wall+0.2) offset(0.5) square([usb_w, usb_h], center=true);
         // microSD, right edge
