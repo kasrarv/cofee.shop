@@ -1,0 +1,200 @@
+{
+  "parts": [
+    {
+      "part": "01_fuse_F1_nose",
+      "size_mm": [
+        61.2,
+        68.0,
+        203.9
+      ],
+      "max_dim": 203.9,
+      "volume_cm3": 34.5,
+      "mass_lwpla_g": 20.0,
+      "watertight": true,
+      "print_pose": "upright"
+    },
+    {
+      "part": "02_canopy_hatch",
+      "size_mm": [
+        96.0,
+        50.0,
+        26.2
+      ],
+      "max_dim": 96.0,
+      "volume_cm3": 5.8,
+      "mass_lwpla_g": 3.4,
+      "watertight": true,
+      "print_pose": "flat"
+    },
+    {
+      "part": "03_fuse_F2_centre",
+      "size_mm": [
+        57.5,
+        68.0,
+        233.9
+      ],
+      "max_dim": 233.9,
+      "volume_cm3": 35.4,
+      "mass_lwpla_g": 20.5,
+      "watertight": true,
+      "print_pose": "upright"
+    },
+    {
+      "part": "04_fuse_F3_boom",
+      "size_mm": [
+        40.8,
+        46.0,
+        223.9
+      ],
+      "max_dim": 223.9,
+      "volume_cm3": 11.9,
+      "mass_lwpla_g": 6.9,
+      "watertight": true,
+      "print_pose": "upright"
+    },
+    {
+      "part": "05_fuse_F4_tailcone",
+      "size_mm": [
+        28.0,
+        26.0,
+        118.0
+      ],
+      "max_dim": 118.0,
+      "volume_cm3": 6.4,
+      "mass_lwpla_g": 3.7,
+      "watertight": true,
+      "print_pose": "upright"
+    },
+    {
+      "part": "06_wing_inner_R",
+      "size_mm": [
+        164.6,
+        220.0,
+        19.6
+      ],
+      "max_dim": 220.0,
+      "volume_cm3": 47.1,
+      "mass_lwpla_g": 27.3,
+      "watertight": true,
+      "print_pose": "flat"
+    },
+    {
+      "part": "06_wing_inner_L",
+      "size_mm": [
+        164.6,
+        220.0,
+        19.6
+      ],
+      "max_dim": 220.0,
+      "volume_cm3": 47.1,
+      "mass_lwpla_g": 27.3,
+      "watertight": true,
+      "print_pose": "flat"
+    },
+    {
+      "part": "07_wing_outer_R",
+      "size_mm": [
+        144.8,
+        233.0,
+        17.4
+      ],
+      "max_dim": 233.0,
+      "volume_cm3": 31.2,
+      "mass_lwpla_g": 18.1,
+      "watertight": true,
+      "print_pose": "flat"
+    },
+    {
+      "part": "07_wing_outer_L",
+      "size_mm": [
+        144.8,
+        233.0,
+        17.4
+      ],
+      "max_dim": 233.0,
+      "volume_cm3": 31.2,
+      "mass_lwpla_g": 18.1,
+      "watertight": true,
+      "print_pose": "flat"
+    },
+    {
+      "part": "08_stab_half_R",
+      "size_mm": [
+        90.0,
+        6.0,
+        170.0
+      ],
+      "max_dim": 170.0,
+      "volume_cm3": 15.7,
+      "mass_lwpla_g": 9.1,
+      "watertight": true,
+      "print_pose": "onroot"
+    },
+    {
+      "part": "08_stab_half_L",
+      "size_mm": [
+        90.0,
+        6.0,
+        170.0
+      ],
+      "max_dim": 170.0,
+      "volume_cm3": 15.7,
+      "mass_lwpla_g": 9.1,
+      "watertight": true,
+      "print_pose": "onroot"
+    },
+    {
+      "part": "09_elevator_half_R",
+      "size_mm": [
+        55.7,
+        19.2,
+        168.0
+      ],
+      "max_dim": 168.0,
+      "volume_cm3": 7.5,
+      "mass_lwpla_g": 4.4,
+      "watertight": true,
+      "print_pose": "onroot"
+    },
+    {
+      "part": "09_elevator_half_L",
+      "size_mm": [
+        55.7,
+        19.2,
+        168.0
+      ],
+      "max_dim": 168.0,
+      "volume_cm3": 7.5,
+      "mass_lwpla_g": 4.4,
+      "watertight": true,
+      "print_pose": "onroot"
+    },
+    {
+      "part": "10_fin",
+      "size_mm": [
+        115.4,
+        5.5,
+        160.0
+      ],
+      "max_dim": 160.0,
+      "volume_cm3": 16.4,
+      "mass_lwpla_g": 9.5,
+      "watertight": true,
+      "print_pose": "onroot"
+    },
+    {
+      "part": "11_rudder",
+      "size_mm": [
+        39.6,
+        18.0,
+        140.0
+      ],
+      "max_dim": 140.0,
+      "volume_cm3": 4.7,
+      "mass_lwpla_g": 2.7,
+      "watertight": true,
+      "print_pose": "onroot"
+    }
+  ],
+  "airframe_mass_g": 184.5
+}
