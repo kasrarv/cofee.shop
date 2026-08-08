@@ -1,0 +1,12 @@
+{
+  "auw_g": 340,
+  "wing_loading": 28.5,
+  "v_stall_ms": 6.3,
+  "motor": "2205 3000KV",
+  "prop": "6x3",
+  "rpm": 8990,
+  "amps": 5.2,
+  "thrust_g": 163,
+  "t_over_w": 0.48,
+  "cruise_w": 10.5
+}
