@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>نشست‌های کتاب‌خوانی، نقد و بررسی آثار نمایشی — پوستر</title>
+<link rel="stylesheet" href="./fonts/fonts.css">
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   نشست‌های کتاب‌خوانی، نقد و بررسی آثار نمایشی
+   کانون نمایشنامه‌نویسان و مترجمان خانه تئاتر
+   ── Master template / visual system ──────────────────────────────────────
+   مفهوم: «صحنه و صفحه» — طاقِ انتزاعیِ ایرانی که هم‌زمان قابِ صحنهٔ تئاتر است،
+   و صفحهٔ کاغذِ کرم‌رنگ که اثرِ ادبی را در دلِ آن قاب می‌نشاند.
+   ═════════════════════════════════════════════════════════════════════════ */
+
+:root{
+  /* ── پالت ──────────────────────────────────────────────────────────── */
+  --lapis:       #12233F;   /* لاجوردی عمیق — زمینه */
+  --lapis-deep:  #0A1526;   /* لاجوردی تیره‌تر — عمق پایین کادر */
+  --lapis-ink:   #101F38;   /* مرکّبِ متن روی کاغذ */
+  --cream:       #F2EBDD;   /* کرم استخوانی — کاغذ و متن اصلی */
+  --gold:        #C9A46A;   /* طلایی مات — نشانه‌ها و خطوط مویی */
+  --crimson:     #7E1F2E;   /* زرشکی — تنها یک نقطهٔ تأکید */
+  --teal:        #1B5E63;   /* فیروزه‌ای تیره — فقط داخل نقش هندسی */
+
+  --hair:        rgba(242,235,221,.20);   /* خط مویی روی لاجورد */
+  --hair-gold:   rgba(201,164,106,.34);
+  --dim:         rgba(242,235,221,.66);
+
+  /* ── تایپوگرافی ────────────────────────────────────────────────────── */
+  --sans: 'Vazirmatn', system-ui, sans-serif;   /* هویت و اطلاعات */
+  --serif:'Markazi Text', 'Vazirmatn', serif;   /* محتوای ادبی: نام آثار */
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:#070E19;overflow:hidden}
+body{display:grid;place-items:center}
+
+/* ── سکو و مقیاس‌گذاری ───────────────────────────────────────────────────
+   هر اندازهٔ پوستر با ضربِ واحدِ --u ساخته می‌شود؛ بنابراین یک طرح، سه قطع. */
+.stage{transform:scale(var(--fit,1));transform-origin:center}
+
+.poster{
+  --u: calc(var(--W) / 1080 * 1px);   /* واحد پایه: نسبت به عرض ۱۰۸۰ */
+  --bleed: 0px;
+  --padX: calc(76 * var(--u));
+  --padY: calc(72 * var(--u));
+  position:relative;
+  width:calc(var(--W) * 1px + 2 * var(--bleed));
+  height:calc(var(--H) * 1px + 2 * var(--bleed));
+  overflow:hidden;
+  background:
+    radial-gradient(120% 78% at 78% 8%, rgba(27,94,99,.30) 0%, rgba(27,94,99,0) 58%),
+    linear-gradient(178deg, var(--lapis) 0%, var(--lapis) 44%, var(--lapis-deep) 100%);
+  color:var(--cream);
+  font-family:var(--sans);
+  font-feature-settings:"ss01";
+  -webkit-font-smoothing:antialiased;
+}
+/* قطع چاپی: ۳ میلی‌متر نشتِ رنگ + علامت برش */
+.poster.bleed{--bleed:11.34px}
+
+/* دانهٔ کاغذ و چاپ دستی */
+.grain{position:absolute;inset:0;pointer-events:none;opacity:.30;mix-blend-mode:overlay;
+  background-image:var(--grain);background-size:calc(260 * var(--u)) calc(260 * var(--u))}
+.vignette{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(112% 74% at 50% 34%, rgba(0,0,0,0) 42%, rgba(4,10,20,.55) 100%)}
+
+/* ── نقشِ هندسی: طاق + گرهٔ هشت‌پر، انتزاعی و مویی ────────────────────── */
+.art{position:absolute;inset:0;pointer-events:none}
+.art svg{position:absolute}
+.art .portal{inset:0;width:100%;height:100%}
+
+/* ── کادرِ برش و ستون‌بندی ──────────────────────────────────────────── */
+.trim{position:absolute;inset:var(--bleed);display:flex;flex-direction:column;
+  padding:var(--padY) var(--padX)}
+/* دو خط مویی که شبکهٔ طراحی را آشکار می‌کند — امضای بصری مجموعه */
+.rail{position:absolute;top:calc(28 * var(--u));bottom:calc(28 * var(--u));width:1px;
+  background:linear-gradient(180deg,rgba(242,235,221,0),var(--hair) 12%,var(--hair) 88%,rgba(242,235,221,0))}
+.rail.r{right:calc(var(--padX) - 26 * var(--u))}
+.rail.l{left:calc(var(--padX) - 26 * var(--u))}
+
+.content{position:relative;display:flex;flex-direction:column;height:100%;
+  transform-origin:top center}
+/* بخش‌ها فشرده نمی‌شوند؛ فقط فاصله‌گذارها کش می‌آیند. */
+.content > *{flex:0 0 auto}
+
+/* ── ۰. سربرگ: برگزارکننده ───────────────────────────────────────────── */
+.masthead{display:flex;align-items:center;justify-content:space-between;
+  gap:calc(20 * var(--u));padding-bottom:calc(20 * var(--u));border-bottom:1px solid var(--hair)}
+.org{display:flex;align-items:center;gap:calc(14 * var(--u))}
+.seal{width:calc(30 * var(--u));height:calc(30 * var(--u));flex:none}
+.org b{font-weight:600;font-size:calc(21 * var(--u));letter-spacing:-.005em;color:var(--cream)}
+.edition{font-weight:500;font-size:calc(16 * var(--u));letter-spacing:.13em;color:var(--gold);
+  white-space:nowrap}
+
+/* ── ۱. عنوان اصلی ───────────────────────────────────────────────────── */
+.hero{padding-top:calc(32 * var(--u))}
+.kicker{display:flex;align-items:center;gap:calc(14 * var(--u));
+  font-size:calc(19 * var(--u));font-weight:500;letter-spacing:.055em;color:var(--gold)}
+.kicker::after{content:"";flex:1;height:1px;background:var(--hair-gold)}
+.title{margin-top:calc(14 * var(--u));width:92%;font-weight:900;line-height:1.02;
+  letter-spacing:-.028em;font-size:calc(96 * var(--u));
+  text-shadow:0 calc(10 * var(--u)) calc(34 * var(--u)) rgba(4,10,20,.45)}
+.title em{font-style:normal;color:var(--gold)}
+.title-rule{margin-top:calc(20 * var(--u));width:calc(112 * var(--u));height:calc(5 * var(--u));
+  background:var(--crimson)}
+
+/* ── ۲. صفحهٔ کاغذ: اثر و نویسنده ────────────────────────────────────── */
+/* عمداً از لبهٔ چپ فاصله دارد: ستونِ خالیْ جای نفس‌کشیدنِ نقشِ هندسی است. */
+.paper{position:relative;margin-top:calc(26 * var(--u));width:83%;background:var(--cream);
+  color:var(--lapis-ink);padding:calc(22 * var(--u)) calc(28 * var(--u)) calc(22 * var(--u));
+  box-shadow:calc(-14 * var(--u)) calc(16 * var(--u)) calc(44 * var(--u)) rgba(4,10,20,.40)}
+.paper::before{content:"";position:absolute;inset:calc(7 * var(--u));
+  border:1px solid rgba(16,31,56,.16);pointer-events:none}
+.paper::after{content:"";position:absolute;top:0;bottom:0;right:0;width:calc(6 * var(--u));
+  background:var(--gold)}
+.paper .lbl{font-size:calc(15 * var(--u));font-weight:600;letter-spacing:.14em;
+  color:var(--crimson)}
+.books{margin-top:calc(10 * var(--u))}
+.book{font-family:var(--serif);font-weight:700;font-size:calc(56 * var(--u));line-height:1.12;
+  letter-spacing:-.01em}
+.book + .book{margin-top:calc(6 * var(--u));padding-top:calc(8 * var(--u));
+  border-top:1px solid rgba(16,31,56,.18)}
+.author{margin-top:calc(10 * var(--u));font-size:calc(22 * var(--u));font-weight:500;
+  color:rgba(16,31,56,.72)}
+
+/* نوشتهٔ عمودی در ستونِ کناری — امضای مجموعه */
+.side{position:absolute;right:calc(var(--padX) - 41 * var(--u));
+  bottom:calc(var(--sideBottom) * var(--u));transform-origin:right bottom;
+  transform:rotate(90deg);font-size:calc(12 * var(--u));font-weight:500;direction:ltr;
+  letter-spacing:.30em;color:rgba(201,164,106,.50);white-space:nowrap}
+
+/* ── ۳. اهالی نشست: منتقدان، مجری، مهمان ویژه ───────────────────────── */
+.people{margin-top:calc(20 * var(--u))}
+.prow{display:grid;grid-template-columns:calc(188 * var(--u)) 1px 1fr;
+  gap:calc(22 * var(--u));align-items:baseline;padding:calc(13 * var(--u)) 0;
+  border-bottom:1px solid var(--hair)}
+.prow:first-child{border-top:1px solid var(--hair)}
+.prow .lbl{font-size:calc(17 * var(--u));font-weight:500;letter-spacing:.04em;color:var(--gold)}
+.prow .bar{align-self:stretch;background:var(--hair)}
+.names{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 calc(20 * var(--u));
+  font-size:calc(30 * var(--u));font-weight:700;line-height:1.42;letter-spacing:-.012em}
+.names span{position:relative}
+.names span + span::before{content:"";position:absolute;right:calc(-12 * var(--u));
+  top:50%;width:calc(4 * var(--u));height:calc(4 * var(--u));margin-top:calc(-2 * var(--u));
+  border-radius:50%;background:var(--gold)}
+
+/* ── ۴. زمان و مکان ─────────────────────────────────────────────────── */
+.spacer{flex:1 1 auto;min-height:calc(14 * var(--u))}
+.spacer.sm{flex:.7 1 auto;min-height:calc(10 * var(--u))}
+.when{display:grid;grid-template-columns:var(--whenGrid,1.15fr .5fr 1.35fr);
+  background:var(--crimson);color:var(--cream);align-items:center}
+.when .cell{padding:calc(16 * var(--u)) calc(20 * var(--u));position:relative}
+.when .cell + .cell::before{content:"";position:absolute;right:0;top:calc(13 * var(--u));
+  bottom:calc(13 * var(--u));width:1px;background:rgba(242,235,221,.30)}
+.when .lbl{font-size:calc(13 * var(--u));font-weight:500;letter-spacing:.16em;
+  color:rgba(242,235,221,.70)}
+.when .val{margin-top:calc(4 * var(--u));font-size:calc(25 * var(--u));font-weight:700;
+  line-height:1.26;letter-spacing:-.014em}
+.address{display:flex;justify-content:space-between;gap:calc(20 * var(--u));
+  margin-top:calc(13 * var(--u));font-size:calc(17 * var(--u));font-weight:400;color:var(--dim)}
+.address .entry{color:var(--gold);white-space:nowrap;font-weight:500}
+
+/* ── ۵. نوارِ لوگوها ────────────────────────────────────────────────── */
+.logos{margin-top:calc(16 * var(--u));padding-top:calc(14 * var(--u));
+  border-top:1px solid var(--hair)}
+.logos .cap{font-size:calc(13 * var(--u));font-weight:500;letter-spacing:.14em;
+  color:rgba(242,235,221,.42)}
+.logobar{margin-top:calc(12 * var(--u));display:flex;gap:calc(12 * var(--u));
+  justify-content:flex-start}
+.slot{flex:1 1 0;min-width:0;max-width:calc(202 * var(--u));height:calc(68 * var(--u));display:grid;place-items:center;
+  text-align:center;padding:calc(6 * var(--u));border:1px solid rgba(242,235,221,.26);
+  border-radius:calc(3 * var(--u));font-size:calc(13 * var(--u));font-weight:500;
+  line-height:1.36;color:rgba(242,235,221,.60)}
+.slot.opt{border-style:dashed;border-color:rgba(201,164,106,.42);color:rgba(201,164,106,.66)}
+.slot i{display:block;font-style:normal;font-size:calc(11 * var(--u));
+  color:rgba(242,235,221,.34);margin-top:calc(3 * var(--u))}
+
+/* ── علامت‌های برش (فقط قطع چاپی) ───────────────────────────────────── */
+.marks{position:absolute;inset:0;pointer-events:none;display:none}
+.poster.bleed .marks{display:block}
+.marks i{position:absolute;background:rgba(242,235,221,.85)}
+
+@media print{ html,body{background:#fff;overflow:visible} @page{ size:auto; margin:0 } }
+</style>
+</head>
+<body>
+
+<script>
+/* ╔══════════════════════════════════════════════════════════════════════╗
+   ║  ✏️  تنها بخشی که برای هر نشست تغییر می‌کند                            ║
+   ║  همهٔ متن‌ها اینجاست. چیدمان خودش را با هر طول متن تطبیق می‌دهد.        ║
+   ╚══════════════════════════════════════════════════════════════════════╝ */
+const DATA = {
+
+  /* نام مجموعه — ثابت می‌ماند */
+  series:    'نشست‌های کتاب‌خوانی، نقد و بررسی آثار نمایشی',
+
+  /* برگزارکننده — ثابت می‌ماند */
+  organizer: 'کانون نمایشنامه‌نویسان و مترجمان خانه تئاتر',
+
+  /* امضای لاتینِ کنارهٔ پوستر — اختیاری، برای حذف: '' */
+  spine:     'IRANIAN PLAYWRIGHTS & TRANSLATORS GUILD · HOUSE OF THEATRE',
+
+  /* شمارهٔ نشست — اختیاری، برای حذف: '' */
+  edition:   'نشست شمارهٔ [۰۰]',
+
+  /* عنوان اصلی نشست. هرچه داخل <em> باشد طلایی می‌شود.
+     طول عنوان مهم نیست؛ اندازهٔ حروف خودکار تنظیم می‌شود. */
+  title:     'نقد و بررسی کتاب <em>۱۴۰۵</em>',
+
+  /* اثر یا آثار مورد بررسی — یک یا چند عنوان */
+  booksLabel:'اثر مورد بررسی',
+  books:     ['[عنوان کتاب اول]', '[عنوان کتاب دوم]'],
+  author:    'نوشته [نام نویسنده / نویسندگان]',
+
+  /* اهالی نشست — هر سطر optional:true داشته باشد، با حذفِ نام‌ها خودبه‌خود کنار می‌رود.
+     تعداد نام‌ها در هر سطر آزاد است. */
+  rows: [
+    { label:'با حضور و نقد',    names:['[نام منتقد اول]', '[نام منتقد دوم]'] },
+    { label:'رئیس جلسه / مجری', names:['[نام مجری]'] },
+    { label:'مهمان ویژه',       names:['[نام مهمان ویژه]'], optional:true },
+  ],
+
+  /* زمان و مکان */
+  when: [
+    { label:'تاریخ', value:'پنجشنبه ۲۹ مرداد ۱۴۰۵' },
+    { label:'ساعت',  value:'۱۷:۰۰' },
+    { label:'مکان',  value:'سالن مشاهیر تئاتر شهر تهران' },
+  ],
+  address:   '[آدرس کامل محل برگزاری]',
+  entry:     'ورود برای عموم آزاد است',   /* اختیاری — برای حذف: '' */
+
+  /* لوگوها — required:false یعنی «در صورت تأیید» و با خط‌چین نمایش داده می‌شود */
+  logos: [
+    { name:'کانون نمایشنامه‌نویسان و مترجمان', required:true  },
+    { name:'خانه تئاتر',                      required:true  },
+    { name:'تئاتر شهر',                       required:true  },
+    { name:'مرکز هنرهای نمایشی',              required:false },
+    { name:'اداره کل هنرهای نمایشی رادیو',    required:false },
+  ],
+
+};
+
+/* قطع‌های خروجی. عرض/ارتفاع بر حسب پیکسل CSS. */
+const FORMATS = {
+  post:  { W:1080,    H:1350,   title:134 },      /* اینستاگرام / تلگرام / واتساپ */
+  story: { W:1080,    H:1920,   title:150, padY:250 },  /* استوری — با حاشیهٔ امنِ بالا و پایین */
+  print: { W:1122.52, H:1587.4, title:138, bleed:true }, /* A3 با ۳ میلی‌متر نشتِ رنگ */
+};
+</script>
+
+<div class="stage"><article class="poster" id="poster"></article></div>
+
+<script>
+/* ── بافتِ دانهٔ کاغذ: یک کاشیِ نویز که با اندازهٔ پوستر بزرگ می‌شود ─────── */
+const GRAIN = "url(\"data:image/svg+xml;utf8," + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="260" height="260">' +
+  '<filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.82" numOctaves="4" stitchTiles="stitch"/>' +
+  '<feColorMatrix type="saturate" values="0"/></filter>' +
+  '<rect width="260" height="260" filter="url(#n)" opacity="0.55"/></svg>') + "\")";
+
+/* ── نقشِ هندسی: شمسه + طاقِ ایرانی، هر دو فقط با خطِ مویی ─────────────── */
+function artwork(H){
+  /* شمسه: ستارهٔ n‌پر با پره‌های شعاعی و حلقه‌های هم‌مرکز — بریده با لبهٔ کادر */
+  const shamsa = (cx, cy, r, n, step) => {
+    const P = k => [cx + r*Math.cos(-Math.PI/2 + k*2*Math.PI/n),
+                    cy + r*Math.sin(-Math.PI/2 + k*2*Math.PI/n)];
+    let d = '';
+    for (let s = 0; s < step; s++){          /* چند ستارهٔ درهم‌بافته = گره */
+      let k = s, path = '';
+      do { const [x,y] = P(k); path += (path ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
+           k = (k + step) % n; } while (k !== s);
+      d += path + 'Z';
+    }
+    const spokes = Array.from({length:n}, (_,k) => {
+      const [x,y] = P(k);
+      return `M${cx} ${cy}L${x.toFixed(1)} ${y.toFixed(1)}`;
+    }).join('');
+    return `<path d="${d}"/><path d="${spokes}" opacity=".45"/>` +
+           [1,.74,.5,.26].map(f => `<circle cx="${cx}" cy="${cy}" r="${(r*f).toFixed(1)}"/>`).join('');
+  };
+  /* طاقِ کلیل — هم‌زمان سردرِ ایرانی و قابِ صحنهٔ تئاتر.
+     مختصات با ارتفاعِ همان قطع محاسبه می‌شود تا در هر سه اندازه یک‌جور بنشیند. */
+  const spring = (H * 0.385).toFixed(0), apex = (H * 0.083).toFixed(0),
+        ctrl   = (H * 0.238).toFixed(0), curve = (H * 0.175).toFixed(0);
+  const arch = `M 150 ${H} L 150 ${spring} C 150 ${ctrl} 320 ${curve} 540 ${apex}` +
+               ` C 760 ${curve} 930 ${ctrl} 930 ${spring} L 930 ${H}`;
+  return `
+  <svg class="portal" viewBox="0 0 1080 ${H}" preserveAspectRatio="xMidYMid meet" fill="none">
+    <defs>
+      <radialGradient id="beam" cx="50%" cy="6%" r="76%">
+        <stop offset="0%"  stop-color="#C9A46A" stop-opacity=".20"/>
+        <stop offset="52%" stop-color="#C9A46A" stop-opacity=".05"/>
+        <stop offset="100%" stop-color="#C9A46A" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+
+    <path d="${arch}" fill="url(#beam)"/>
+    <g stroke="#C9A46A" stroke-width="1.4" opacity=".34">
+      <path d="${arch}"/>
+      <path d="${arch}" transform="translate(0,30) scale(1,0.978)" opacity=".45"/>
+    </g>
+
+    <g stroke="#C9A46A" stroke-width="1.15" opacity=".30">${shamsa(-46, H * 0.317, 356, 16, 6)}</g>
+    <g stroke="#1B5E63" stroke-width="1.15" opacity=".45">${shamsa(-46, H * 0.317, 356, 16, 5)}</g>
+
+  </svg>`;
+}
+
+function esc(s){ return String(s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
+
+/* ── ساختِ پوستر از روی DATA ─────────────────────────────────────────── */
+function build(fmt){
+  const F = FORMATS[fmt] || FORMATS.post;
+  const el = document.getElementById('poster');
+  el.className = 'poster' + (F.bleed ? ' bleed' : '');
+  el.style.setProperty('--W', F.W);
+  el.style.setProperty('--H', F.H);
+  el.style.setProperty('--grain', GRAIN);
+  el.style.setProperty('--sideBottom', fmt === 'story' ? 470 : 296);
+  if (F.padY) el.style.setProperty('--padY', `calc(${F.padY} * var(--u))`);
+
+  const rows = DATA.rows.filter(r => r.names && r.names.filter(Boolean).length);
+  const when = DATA.when.filter(w => w.value);
+
+  el.innerHTML = `
+    <div class="grain"></div>
+    <div class="art">${artwork(Math.round(1080 * F.H / F.W))}</div>
+    <div class="vignette"></div>
+    <div class="marks">${['0 0','1 0','0 1','1 1'].map(p=>{
+      const [x,y] = p.split(' ').map(Number);
+      const v = `${x?'right':'left'}:calc(var(--bleed) - 1px);${y?'bottom':'top'}:0;width:1px;height:var(--bleed)`;
+      const h = `${y?'bottom':'top'}:calc(var(--bleed) - 1px);${x?'right':'left'}:0;height:1px;width:var(--bleed)`;
+      return `<i style="${v}"></i><i style="${h}"></i>`;}).join('')}</div>
+
+    <div class="trim">
+      <span class="rail r"></span><span class="rail l"></span>
+      <span class="side">${esc(DATA.spine || '')}</span>
+      <div class="content" id="content">
+
+        <header class="masthead">
+          <div class="org">
+            <svg class="seal" viewBox="0 0 40 40" fill="none" stroke="#C9A46A" stroke-width="1.6">
+              <circle cx="20" cy="20" r="18.4"/>
+              <path d="M20 4.6 33.9 12.3v15.4L20 35.4 6.1 27.7V12.3z"/>
+              <path d="M13.4 26.4V15.1c4.4-1.9 8.8-1.9 13.2 0v11.3c-4.4-1.9-8.8-1.9-13.2 0z" fill="#C9A46A" fill-opacity=".18"/>
+              <path d="M20 14.2v12.9"/>
+            </svg>
+            <b>${esc(DATA.organizer)}</b>
+          </div>
+          ${DATA.edition ? `<span class="edition">${esc(DATA.edition)}</span>` : ''}
+        </header>
+
+        <section class="hero">
+          <div class="kicker"><span>${esc(DATA.series)}</span></div>
+          <h1 class="title" id="title">${DATA.title}</h1>
+          <div class="title-rule"></div>
+        </section>
+
+        <section class="paper">
+          <div class="lbl">${esc(DATA.booksLabel)}</div>
+          <div class="books" id="books">
+            ${DATA.books.filter(Boolean).map(b => `<div class="book">${esc(b)}</div>`).join('')}
+          </div>
+          ${DATA.author ? `<div class="author">${esc(DATA.author)}</div>` : ''}
+        </section>
+
+        <div class="spacer sm"></div>
+
+        <section class="people">
+          ${rows.map(r => `
+          <div class="prow">
+            <div class="lbl">${esc(r.label)}</div><div class="bar"></div>
+            <div class="names">${r.names.filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('')}</div>
+          </div>`).join('')}
+        </section>
+
+        <div class="spacer"></div>
+
+        <section>
+          <div class="when" style="--whenCols:${when.length}">
+            ${when.map(w => `<div class="cell"><div class="lbl">${esc(w.label)}</div>
+              <div class="val">${esc(w.value)}</div></div>`).join('')}
+          </div>
+          <div class="address">
+            <span>${esc(DATA.address || '')}</span>
+            ${DATA.entry ? `<span class="entry">${esc(DATA.entry)}</span>` : ''}
+          </div>
+        </section>
+
+        <footer class="logos">
+          <div class="cap">با همکاری</div>
+          <div class="logobar">
+            ${DATA.logos.map(l => `<div class="slot${l.required ? '' : ' opt'}">
+              <span>${esc(l.name)}${l.required ? '' : '<i>در صورت تأیید</i>'}</span></div>`).join('')}
+          </div>
+        </footer>
+
+      </div>
+    </div>`;
+}
+
+/* ── تنظیمِ خودکارِ اندازهٔ حروف: طرح به طولِ متن وابسته نیست ────────────
+   شمارشِ سطرها با Range انجام می‌شود، نه با ارتفاع؛ چون کشیدگی و زیرِ خطِ
+   حروف فارسی ارتفاعِ بلوک را بیش از line-height نشان می‌دهد. */
+function lineCount(el){
+  const r = document.createRange();
+  r.selectNodeContents(el);
+  return new Set([...r.getClientRects()]
+    .filter(b => b.height > 1)
+    .map(b => Math.round(b.top))).size || 1;
+}
+function fitText(el, maxPx, minPx, maxLines){
+  if (!el) return;
+  let lo = minPx, hi = maxPx;
+  el.style.fontSize = maxPx + 'px';
+  if (lineCount(el) <= maxLines) { return; }            /* در بزرگ‌ترین اندازه جا می‌شود */
+  for (let i = 0; i < 18; i++){
+    const mid = (lo + hi) / 2;
+    el.style.fontSize = mid + 'px';
+    if (lineCount(el) <= maxLines) lo = mid; else hi = mid;
+  }
+  el.style.fontSize = lo + 'px';
+}
+
+async function render(fmt){
+  build(fmt);
+  await document.fonts.ready;
+  const el = document.getElementById('poster');
+  const u  = parseFloat(getComputedStyle(el).getPropertyValue('--W')) / 1080;
+
+  fitText(document.getElementById('title'), (FORMATS[fmt] || FORMATS.post).title * u, 44 * u, 2);
+  const books = [...document.querySelectorAll('.book')];
+  const bMax = books.length > 1 ? 46 : 60;
+  books.forEach(b => fitText(b, bMax * u, 26 * u, 2));
+
+  /* شبکهٔ ایمنی: اگر متنِ یک نشست غیرعادی بلند شد، ستون به‌جای شکستن، کمی جمع می‌شود */
+  const content = document.getElementById('content');
+  const box = content.parentElement;
+  const avail = box.clientHeight - parseFloat(getComputedStyle(box).paddingTop)
+                                 - parseFloat(getComputedStyle(box).paddingBottom);
+  content.style.transform = 'none';
+  if (content.scrollHeight > avail + 1){
+    const k = Math.max(0.82, avail / content.scrollHeight);
+    content.style.transform = `scale(${k})`;
+    content.style.height = (avail / k) + 'px';
+  }
+  document.body.dataset.ready = '1';
+}
+
+/* ── نمایش: در مرورگر کوچک می‌شود، در خروجی‌گیری اندازهٔ واقعی ──────────── */
+const P = new URLSearchParams(location.search);
+const FMT = P.get('f') || 'post';
+function fitViewport(){
+  if (P.get('fit') === '0'){ document.querySelector('.stage').style.setProperty('--fit', 1); return; }
+  const F = FORMATS[FMT] || FORMATS.post;
+  const b = F.bleed ? 22.68 : 0;
+  const k = Math.min(1, (innerWidth - 24) / (F.W + b), (innerHeight - 24) / (F.H + b));
+  document.querySelector('.stage').style.setProperty('--fit', k);
+}
+addEventListener('resize', fitViewport);
+render(FMT).then(fitViewport);
+</script>
+</body>
+</html>

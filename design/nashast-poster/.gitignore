@@ -1,0 +1,3 @@
+node_modules/
+# ۱۲ مگابایت، با `node build.js` در چند ثانیه بازساخته می‌شود
+out/*-print.png
