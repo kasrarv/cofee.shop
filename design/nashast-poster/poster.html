@@ -9,178 +9,144 @@
    نشست‌های کتاب‌خوانی، نقد و بررسی آثار نمایشی
    کانون نمایشنامه‌نویسان و مترجمان خانه تئاتر
    ── Master template / visual system ──────────────────────────────────────
-   مفهوم: «صحنه و صفحه» — طاقِ انتزاعیِ ایرانی که هم‌زمان قابِ صحنهٔ تئاتر است،
-   و صفحهٔ کاغذِ کرم‌رنگ که اثرِ ادبی را در دلِ آن قاب می‌نشاند.
+   مفهوم: «صندلی خالی» — پرده بالا رفته، ماهِ فیروزه‌ای پشتِ صحنه است، و روی
+   کتابِ باز فقط یک صندلیِ خالی ایستاده: جای نویسنده‌ای که امشب اثرش خوانده
+   می‌شود. اجرا به زبانِ چاپِ دستی: کاغذِ گرم، چند مرکّبِ محدود، خطای ثبتِ رنگ.
    ═════════════════════════════════════════════════════════════════════════ */
 
 :root{
-  /* ── پالت ──────────────────────────────────────────────────────────── */
-  --lapis:       #12233F;   /* لاجوردی عمیق — زمینه */
-  --lapis-deep:  #0A1526;   /* لاجوردی تیره‌تر — عمق پایین کادر */
-  --lapis-ink:   #101F38;   /* مرکّبِ متن روی کاغذ */
-  --cream:       #F2EBDD;   /* کرم استخوانی — کاغذ و متن اصلی */
-  --gold:        #C9A46A;   /* طلایی مات — نشانه‌ها و خطوط مویی */
-  --crimson:     #7E1F2E;   /* زرشکی — تنها یک نقطهٔ تأکید */
-  --teal:        #1B5E63;   /* فیروزه‌ای تیره — فقط داخل نقش هندسی */
+  /* ── مرکّب‌ها: مثل چاپِ سیلک، چند رنگِ محدود و نه بیشتر ─────────────── */
+  --paper:    #F2E7D0;   /* کاغذِ کرمِ گرم — زمینه */
+  --paper-lo: #E7D8B8;   /* کفِ صحنه */
+  --ivory:    #FBF4E5;   /* صفحاتِ کتاب، تکه‌کاغذِ چسبانده‌شده */
+  --ink:      #17306B;   /* آبیِ کبالت — متنِ اصلی */
+  --crimson:  #A31E2F;   /* زرشکیِ گرم — پرده و تأکیدِ بلند */
+  --burgundy: #6D1421;   /* سایهٔ چینِ پرده */
+  --turq:     #1B9299;   /* فیروزهٔ ایرانی — تأکیدِ آرام */
+  --orange:   #DE7429;   /* نارنجیِ ایرانی — ترامِ چاپ و خطای ثبت */
 
-  --hair:        rgba(242,235,221,.20);   /* خط مویی روی لاجورد */
-  --hair-gold:   rgba(201,164,106,.34);
-  --dim:         rgba(242,235,221,.66);
-
-  /* ── تایپوگرافی ────────────────────────────────────────────────────── */
-  --sans: 'Vazirmatn', system-ui, sans-serif;   /* هویت و اطلاعات */
-  --serif:'Markazi Text', 'Vazirmatn', serif;   /* محتوای ادبی: نام آثار */
+  --sans: 'Vazirmatn', system-ui, sans-serif;
+  --serif:'Markazi Text', 'Vazirmatn', serif;
+  --disp: 'Lalezar', 'Vazirmatn', sans-serif;
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;background:#070E19;overflow:hidden}
+html,body{height:100%;background:#20242B;overflow:hidden}
 body{display:grid;place-items:center}
-
-/* ── سکو و مقیاس‌گذاری ───────────────────────────────────────────────────
-   هر اندازهٔ پوستر با ضربِ واحدِ --u ساخته می‌شود؛ بنابراین یک طرح، سه قطع. */
 .stage{transform:scale(var(--fit,1));transform-origin:center}
 
 .poster{
-  --u: calc(var(--W) / 1080 * 1px);   /* واحد پایه: نسبت به عرض ۱۰۸۰ */
+  --u: calc(var(--W) / 1080 * 1px);
   --bleed: 0px;
-  --padX: calc(76 * var(--u));
-  --padY: calc(72 * var(--u));
+  --padX: calc(84 * var(--u));
   position:relative;
   width:calc(var(--W) * 1px + 2 * var(--bleed));
   height:calc(var(--H) * 1px + 2 * var(--bleed));
   overflow:hidden;
-  background:
-    radial-gradient(120% 78% at 78% 8%, rgba(27,94,99,.30) 0%, rgba(27,94,99,0) 58%),
-    linear-gradient(178deg, var(--lapis) 0%, var(--lapis) 44%, var(--lapis-deep) 100%);
-  color:var(--cream);
+  background:var(--paper);
+  color:var(--ink);
   font-family:var(--sans);
-  font-feature-settings:"ss01";
   -webkit-font-smoothing:antialiased;
 }
-/* قطع چاپی: ۳ میلی‌متر نشتِ رنگ + علامت برش */
 .poster.bleed{--bleed:11.34px}
 
-/* دانهٔ کاغذ و چاپ دستی */
-.grain{position:absolute;inset:0;pointer-events:none;opacity:.30;mix-blend-mode:overlay;
-  background-image:var(--grain);background-size:calc(260 * var(--u)) calc(260 * var(--u))}
-.vignette{position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(112% 74% at 50% 34%, rgba(0,0,0,0) 42%, rgba(4,10,20,.55) 100%)}
+/* بافتِ کاغذ و دانهٔ چاپ — طرح روی کاغذ می‌نشیند، نه روی شیشه */
+.paper-tex{position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.40;
+  background-image:var(--grain);background-size:calc(300 * var(--u)) calc(300 * var(--u))}
+.warmth{position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;
+  background:radial-gradient(120% 80% at 50% 112%, rgba(122,86,40,.30), rgba(0,0,0,0) 56%)}
 
-/* ── نقشِ هندسی: طاق + گرهٔ هشت‌پر، انتزاعی و مویی ────────────────────── */
-.art{position:absolute;inset:0;pointer-events:none}
-.art svg{position:absolute}
-.art .portal{inset:0;width:100%;height:100%}
+.trim{position:absolute;inset:var(--bleed);display:flex;flex-direction:column}
 
-/* ── کادرِ برش و ستون‌بندی ──────────────────────────────────────────── */
-.trim{position:absolute;inset:var(--bleed);display:flex;flex-direction:column;
-  padding:var(--padY) var(--padX)}
-/* دو خط مویی که شبکهٔ طراحی را آشکار می‌کند — امضای بصری مجموعه */
-.rail{position:absolute;top:calc(28 * var(--u));bottom:calc(28 * var(--u));width:1px;
-  background:linear-gradient(180deg,rgba(242,235,221,0),var(--hair) 12%,var(--hair) 88%,rgba(242,235,221,0))}
-.rail.r{right:calc(var(--padX) - 26 * var(--u))}
-.rail.l{left:calc(var(--padX) - 26 * var(--u))}
+/* ── تصویرِ اصلی ─────────────────────────────────────────────────────── */
+.hero{position:relative;flex:0 0 auto}
+.heroTop{background:var(--crimson)}
+.hero svg{display:block;width:100%;height:auto}
 
-.content{position:relative;display:flex;flex-direction:column;height:100%;
-  transform-origin:top center}
-/* بخش‌ها فشرده نمی‌شوند؛ فقط فاصله‌گذارها کش می‌آیند. */
-.content > *{flex:0 0 auto}
+.masthead{position:absolute;right:0;left:0;text-align:center;color:var(--ivory)}
+.masthead .org{font-size:calc(23 * var(--u));font-weight:600;letter-spacing:-.005em}
+.masthead .ser{margin-top:calc(8 * var(--u));font-size:calc(15 * var(--u));font-weight:400;
+  letter-spacing:.11em;color:rgba(251,244,229,.84)}
+.masthead .orn{margin:calc(13 * var(--u)) auto 0;width:calc(104 * var(--u));height:1px;
+  background:rgba(251,244,229,.42);position:relative}
+.masthead .orn::after{content:"";position:absolute;top:calc(-3.5 * var(--u));left:50%;
+  width:calc(8 * var(--u));height:calc(8 * var(--u));margin-left:calc(-4 * var(--u));
+  background:var(--turq);transform:rotate(45deg)}
+.edition{position:absolute;left:var(--padX);font-size:calc(14 * var(--u));font-weight:500;
+  letter-spacing:.15em;color:rgba(251,244,229,.74)}
 
-/* ── ۰. سربرگ: برگزارکننده ───────────────────────────────────────────── */
-.masthead{display:flex;align-items:center;justify-content:space-between;
-  gap:calc(20 * var(--u));padding-bottom:calc(20 * var(--u));border-bottom:1px solid var(--hair)}
-.org{display:flex;align-items:center;gap:calc(14 * var(--u))}
-.seal{width:calc(30 * var(--u));height:calc(30 * var(--u));flex:none}
-.org b{font-weight:600;font-size:calc(21 * var(--u));letter-spacing:-.005em;color:var(--cream)}
-.edition{font-weight:500;font-size:calc(16 * var(--u));letter-spacing:.13em;color:var(--gold);
-  white-space:nowrap}
+/* ── ستونِ متن ───────────────────────────────────────────────────────── */
+.body{position:relative;flex:1 1 auto;display:flex;flex-direction:column;
+  padding:0 var(--padX) calc(var(--padB, 32) * var(--u));min-height:0}
+.body > *{flex:0 0 auto}
+.gap{flex:1 1 auto;min-height:calc(6 * var(--u))}
+.gap.s{flex:.85 1 auto}
 
-/* ── ۱. عنوان اصلی ───────────────────────────────────────────────────── */
-.hero{padding-top:calc(32 * var(--u))}
-.kicker{display:flex;align-items:center;gap:calc(14 * var(--u));
-  font-size:calc(19 * var(--u));font-weight:500;letter-spacing:.055em;color:var(--gold)}
-.kicker::after{content:"";flex:1;height:1px;background:var(--hair-gold)}
-.title{margin-top:calc(14 * var(--u));width:92%;font-weight:900;line-height:1.02;
-  letter-spacing:-.028em;font-size:calc(96 * var(--u));
-  text-shadow:0 calc(10 * var(--u)) calc(34 * var(--u)) rgba(4,10,20,.45)}
-.title em{font-style:normal;color:var(--gold)}
-.title-rule{margin-top:calc(20 * var(--u));width:calc(112 * var(--u));height:calc(5 * var(--u));
-  background:var(--crimson)}
+/* ۱ ــ عنوان: قفلِ دوتکه‌ای — واژه‌ها، و عددِ سال با اختلافِ اندازهٔ زیاد */
+.lockup{display:flex;align-items:flex-end;gap:calc(20 * var(--u));
+  margin-top:calc(var(--lockUp) * var(--u) * -1)}
+.title{flex:1 1 auto;font-family:var(--disp);font-weight:400;line-height:1.16;
+  font-size:calc(82 * var(--u));color:var(--ink)}
+.accent{flex:0 0 auto;max-width:46%;font-family:var(--disp);line-height:.9;
+  font-size:calc(158 * var(--u));color:var(--crimson);
+  text-shadow:calc(4 * var(--u)) calc(4 * var(--u)) 0 rgba(222,116,41,.38)}
 
-/* ── ۲. صفحهٔ کاغذ: اثر و نویسنده ────────────────────────────────────── */
-/* عمداً از لبهٔ چپ فاصله دارد: ستونِ خالیْ جای نفس‌کشیدنِ نقشِ هندسی است. */
-.paper{position:relative;margin-top:calc(26 * var(--u));width:83%;background:var(--cream);
-  color:var(--lapis-ink);padding:calc(22 * var(--u)) calc(28 * var(--u)) calc(22 * var(--u));
-  box-shadow:calc(-14 * var(--u)) calc(16 * var(--u)) calc(44 * var(--u)) rgba(4,10,20,.40)}
-.paper::before{content:"";position:absolute;inset:calc(7 * var(--u));
-  border:1px solid rgba(16,31,56,.16);pointer-events:none}
-.paper::after{content:"";position:absolute;top:0;bottom:0;right:0;width:calc(6 * var(--u));
-  background:var(--gold)}
-.paper .lbl{font-size:calc(15 * var(--u));font-weight:600;letter-spacing:.14em;
+/* ۲ ــ تکه‌کاغذِ چسبانده‌شده: اثر و نویسنده */
+.patch{position:relative;margin-top:calc(20 * var(--u));width:calc(100% + var(--padX));
+  margin-right:calc(var(--padX) * -1);background:var(--ivory);
+  padding:calc(16 * var(--u)) var(--padX) calc(22 * var(--u)) calc(30 * var(--u));
+  transform:rotate(-.6deg);
+  filter:drop-shadow(calc(-4 * var(--u)) calc(7 * var(--u)) calc(9 * var(--u)) rgba(60,40,20,.24))}
+.lbl{font-size:calc(15 * var(--u));font-weight:600;letter-spacing:.16em;color:var(--turq)}
+.books{margin-top:calc(8 * var(--u))}
+.book{font-family:var(--serif);font-weight:700;font-size:calc(52 * var(--u));line-height:1.1;
+  letter-spacing:-.01em;color:var(--ink)}
+.book + .book::before{content:"";display:block;width:calc(48 * var(--u));
+  height:calc(2 * var(--u));background:var(--crimson);margin:calc(11 * var(--u)) 0}
+.author{margin-top:calc(9 * var(--u));font-size:calc(22 * var(--u));font-weight:500;
+  color:rgba(23,48,107,.76)}
+
+/* ۳ ــ اهالی نشست: دو ستونِ آزاد، بدون قاب و بدون جدول */
+.people{margin-top:calc(20 * var(--u));display:grid;gap:calc(26 * var(--u));
+  grid-template-columns:var(--peopleCols,1fr 1px 1fr)}
+.people .rule{background:rgba(23,48,107,.15)}
+.grp + .grp{margin-top:calc(13 * var(--u))}
+.names{margin-top:calc(5 * var(--u));font-size:calc(29 * var(--u));font-weight:700;
+  line-height:1.38;letter-spacing:-.014em}
+
+/* ۴ ــ زمان و مکان: یک سطرِ بلندِ زرشکی، نه نوار و نه جدول */
+.when{margin-top:calc(20 * var(--u));padding-top:calc(16 * var(--u));
+  border-top:calc(2.5 * var(--u)) solid var(--crimson)}
+.when .date{font-family:var(--disp);font-size:calc(41 * var(--u));line-height:1.2;
   color:var(--crimson)}
-.books{margin-top:calc(10 * var(--u))}
-.book{font-family:var(--serif);font-weight:700;font-size:calc(56 * var(--u));line-height:1.12;
-  letter-spacing:-.01em}
-.book + .book{margin-top:calc(6 * var(--u));padding-top:calc(8 * var(--u));
-  border-top:1px solid rgba(16,31,56,.18)}
-.author{margin-top:calc(10 * var(--u));font-size:calc(22 * var(--u));font-weight:500;
-  color:rgba(16,31,56,.72)}
+.when .date i{font-style:normal;color:var(--orange);margin:0 calc(13 * var(--u));
+  font-size:calc(24 * var(--u));vertical-align:middle}
+.when .venue{margin-top:calc(4 * var(--u));font-size:calc(27 * var(--u));font-weight:700;
+  letter-spacing:-.012em}
+.when .addr{margin-top:calc(7 * var(--u));font-size:calc(17 * var(--u));
+  color:rgba(23,48,107,.60);display:flex;gap:calc(16 * var(--u));flex-wrap:wrap}
+.when .addr b{font-weight:500;color:var(--turq)}
 
-/* نوشتهٔ عمودی در ستونِ کناری — امضای مجموعه */
-.side{position:absolute;right:calc(var(--padX) - 41 * var(--u));
-  bottom:calc(var(--sideBottom) * var(--u));transform-origin:right bottom;
-  transform:rotate(90deg);font-size:calc(12 * var(--u));font-weight:500;direction:ltr;
-  letter-spacing:.30em;color:rgba(201,164,106,.50);white-space:nowrap}
+/* ۵ ــ لوگوها: یک ردیفِ هویتی، بدون مستطیل */
+.logos{margin-top:calc(17 * var(--u));display:flex;align-items:center;
+  gap:calc(15 * var(--u));flex-wrap:wrap}
+.logos .cap{font-size:calc(13 * var(--u));font-weight:600;letter-spacing:.18em;
+  color:rgba(23,48,107,.40);white-space:nowrap}
+.logo{font-size:calc(15 * var(--u));font-weight:600;color:rgba(23,48,107,.82);
+  display:flex;align-items:center;gap:calc(15 * var(--u));white-space:nowrap}
+.logo::before{content:"";width:calc(4 * var(--u));height:calc(4 * var(--u));border-radius:50%;
+  background:rgba(23,48,107,.26)}
+.logo.opt{color:rgba(23,48,107,.46)}
+/* جای‌گذاریِ فایلِ لوگو: <span class="logo"><img src="./logos/…svg" alt="…"></span> */
+.logo img{height:calc(46 * var(--u));width:auto;display:block}
+.latin{margin-top:calc(10 * var(--u));direction:ltr;text-align:left;
+  font-size:calc(11 * var(--u));font-weight:500;letter-spacing:.24em;
+  color:rgba(23,48,107,.34)}
 
-/* ── ۳. اهالی نشست: منتقدان، مجری، مهمان ویژه ───────────────────────── */
-.people{margin-top:calc(20 * var(--u))}
-.prow{display:grid;grid-template-columns:calc(188 * var(--u)) 1px 1fr;
-  gap:calc(22 * var(--u));align-items:baseline;padding:calc(13 * var(--u)) 0;
-  border-bottom:1px solid var(--hair)}
-.prow:first-child{border-top:1px solid var(--hair)}
-.prow .lbl{font-size:calc(17 * var(--u));font-weight:500;letter-spacing:.04em;color:var(--gold)}
-.prow .bar{align-self:stretch;background:var(--hair)}
-.names{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 calc(20 * var(--u));
-  font-size:calc(30 * var(--u));font-weight:700;line-height:1.42;letter-spacing:-.012em}
-.names span{position:relative}
-.names span + span::before{content:"";position:absolute;right:calc(-12 * var(--u));
-  top:50%;width:calc(4 * var(--u));height:calc(4 * var(--u));margin-top:calc(-2 * var(--u));
-  border-radius:50%;background:var(--gold)}
-
-/* ── ۴. زمان و مکان ─────────────────────────────────────────────────── */
-.spacer{flex:1 1 auto;min-height:calc(14 * var(--u))}
-.spacer.sm{flex:.7 1 auto;min-height:calc(10 * var(--u))}
-.when{display:grid;grid-template-columns:var(--whenGrid,1.15fr .5fr 1.35fr);
-  background:var(--crimson);color:var(--cream);align-items:center}
-.when .cell{padding:calc(16 * var(--u)) calc(20 * var(--u));position:relative}
-.when .cell + .cell::before{content:"";position:absolute;right:0;top:calc(13 * var(--u));
-  bottom:calc(13 * var(--u));width:1px;background:rgba(242,235,221,.30)}
-.when .lbl{font-size:calc(13 * var(--u));font-weight:500;letter-spacing:.16em;
-  color:rgba(242,235,221,.70)}
-.when .val{margin-top:calc(4 * var(--u));font-size:calc(25 * var(--u));font-weight:700;
-  line-height:1.26;letter-spacing:-.014em}
-.address{display:flex;justify-content:space-between;gap:calc(20 * var(--u));
-  margin-top:calc(13 * var(--u));font-size:calc(17 * var(--u));font-weight:400;color:var(--dim)}
-.address .entry{color:var(--gold);white-space:nowrap;font-weight:500}
-
-/* ── ۵. نوارِ لوگوها ────────────────────────────────────────────────── */
-.logos{margin-top:calc(16 * var(--u));padding-top:calc(14 * var(--u));
-  border-top:1px solid var(--hair)}
-.logos .cap{font-size:calc(13 * var(--u));font-weight:500;letter-spacing:.14em;
-  color:rgba(242,235,221,.42)}
-.logobar{margin-top:calc(12 * var(--u));display:flex;gap:calc(12 * var(--u));
-  justify-content:flex-start}
-.slot{flex:1 1 0;min-width:0;max-width:calc(202 * var(--u));height:calc(68 * var(--u));display:grid;place-items:center;
-  text-align:center;padding:calc(6 * var(--u));border:1px solid rgba(242,235,221,.26);
-  border-radius:calc(3 * var(--u));font-size:calc(13 * var(--u));font-weight:500;
-  line-height:1.36;color:rgba(242,235,221,.60)}
-.slot.opt{border-style:dashed;border-color:rgba(201,164,106,.42);color:rgba(201,164,106,.66)}
-.slot i{display:block;font-style:normal;font-size:calc(11 * var(--u));
-  color:rgba(242,235,221,.34);margin-top:calc(3 * var(--u))}
-
-/* ── علامت‌های برش (فقط قطع چاپی) ───────────────────────────────────── */
+/* علامت‌های برش (فقط قطع چاپی) */
 .marks{position:absolute;inset:0;pointer-events:none;display:none}
 .poster.bleed .marks{display:block}
-.marks i{position:absolute;background:rgba(242,235,221,.85)}
+.marks i{position:absolute;background:rgba(23,48,107,.72)}
 
 @media print{ html,body{background:#fff;overflow:visible} @page{ size:auto; margin:0 } }
 </style>
@@ -190,49 +156,35 @@ body{display:grid;place-items:center}
 <script>
 /* ╔══════════════════════════════════════════════════════════════════════╗
    ║  ✏️  تنها بخشی که برای هر نشست تغییر می‌کند                            ║
-   ║  همهٔ متن‌ها اینجاست. چیدمان خودش را با هر طول متن تطبیق می‌دهد.        ║
    ╚══════════════════════════════════════════════════════════════════════╝ */
 const DATA = {
 
-  /* نام مجموعه — ثابت می‌ماند */
-  series:    'نشست‌های کتاب‌خوانی، نقد و بررسی آثار نمایشی',
-
-  /* برگزارکننده — ثابت می‌ماند */
   organizer: 'کانون نمایشنامه‌نویسان و مترجمان خانه تئاتر',
+  series:    'نشست‌های کتاب‌خوانی، نقد و بررسی آثار نمایشی',
+  edition:   'نشست شمارهٔ [۰۰]',      /* اختیاری — برای حذف: '' */
 
-  /* امضای لاتینِ کنارهٔ پوستر — اختیاری، برای حذف: '' */
-  spine:     'IRANIAN PLAYWRIGHTS & TRANSLATORS GUILD · HOUSE OF THEATRE',
+  /* عنوان در دو تکه بسته می‌شود: واژه‌ها، و یک تکهٔ درشتِ زرشکی کنارش.
+     اگر accent خالی بماند، عنوان تمامِ عرض را می‌گیرد و بزرگ‌تر می‌شود. */
+  title:     'نقد و بررسی کتاب',
+  accent:    '۱۴۰۵',
 
-  /* شمارهٔ نشست — اختیاری، برای حذف: '' */
-  edition:   'نشست شمارهٔ [۰۰]',
-
-  /* عنوان اصلی نشست. هرچه داخل <em> باشد طلایی می‌شود.
-     طول عنوان مهم نیست؛ اندازهٔ حروف خودکار تنظیم می‌شود. */
-  title:     'نقد و بررسی کتاب <em>۱۴۰۵</em>',
-
-  /* اثر یا آثار مورد بررسی — یک یا چند عنوان */
   booksLabel:'اثر مورد بررسی',
   books:     ['[عنوان کتاب اول]', '[عنوان کتاب دوم]'],
   author:    'نوشته [نام نویسنده / نویسندگان]',
 
-  /* اهالی نشست — هر سطر optional:true داشته باشد، با حذفِ نام‌ها خودبه‌خود کنار می‌رود.
-     تعداد نام‌ها در هر سطر آزاد است. */
+  /* هر گروه که نام نداشته باشد، خودبه‌خود حذف می‌شود */
   rows: [
     { label:'با حضور و نقد',    names:['[نام منتقد اول]', '[نام منتقد دوم]'] },
     { label:'رئیس جلسه / مجری', names:['[نام مجری]'] },
-    { label:'مهمان ویژه',       names:['[نام مهمان ویژه]'], optional:true },
+    { label:'مهمان ویژه',       names:['[نام مهمان ویژه]'] },
   ],
 
-  /* زمان و مکان */
-  when: [
-    { label:'تاریخ', value:'پنجشنبه ۲۹ مرداد ۱۴۰۵' },
-    { label:'ساعت',  value:'۱۷:۰۰' },
-    { label:'مکان',  value:'سالن مشاهیر تئاتر شهر تهران' },
-  ],
+  date:      'پنجشنبه ۲۹ مرداد ۱۴۰۵',
+  time:      '۱۷:۰۰',
+  venue:     'سالن مشاهیر تئاتر شهر تهران',
   address:   '[آدرس کامل محل برگزاری]',
-  entry:     'ورود برای عموم آزاد است',   /* اختیاری — برای حذف: '' */
+  entry:     'ورود برای عموم آزاد است',   /* اختیاری */
 
-  /* لوگوها — required:false یعنی «در صورت تأیید» و با خط‌چین نمایش داده می‌شود */
   logos: [
     { name:'کانون نمایشنامه‌نویسان و مترجمان', required:true  },
     { name:'خانه تئاتر',                      required:true  },
@@ -240,95 +192,172 @@ const DATA = {
     { name:'مرکز هنرهای نمایشی',              required:false },
     { name:'اداره کل هنرهای نمایشی رادیو',    required:false },
   ],
-
+  latin:     'IRANIAN PLAYWRIGHTS & TRANSLATORS GUILD · HOUSE OF THEATRE',
 };
 
-/* قطع‌های خروجی. عرض/ارتفاع بر حسب پیکسل CSS. */
 const FORMATS = {
-  post:  { W:1080,    H:1350,   title:134 },      /* اینستاگرام / تلگرام / واتساپ */
-  story: { W:1080,    H:1920,   title:150, padY:250 },  /* استوری — با حاشیهٔ امنِ بالا و پایین */
-  print: { W:1122.52, H:1587.4, title:138, bleed:true }, /* A3 با ۳ میلی‌متر نشتِ رنگ */
+  post:  { W:1080,    H:1350,   hero:540, title:70, accent:130, lockUp:12 },
+  story: { W:1080,    H:1920,   hero:700, title:78, accent:146, lockUp:14, padY:150, padB:190 },
+  print: { W:1122.52, H:1587.4, hero:596, title:72, accent:134, lockUp:13, bleed:true },
 };
 </script>
 
 <div class="stage"><article class="poster" id="poster"></article></div>
 
 <script>
-/* ── بافتِ دانهٔ کاغذ: یک کاشیِ نویز که با اندازهٔ پوستر بزرگ می‌شود ─────── */
+/* بافتِ کاغذ: الیاف و دانهٔ چاپ، کاشیِ کوچکی که با اندازهٔ پوستر بزرگ می‌شود */
 const GRAIN = "url(\"data:image/svg+xml;utf8," + encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" width="260" height="260">' +
-  '<filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.82" numOctaves="4" stitchTiles="stitch"/>' +
+  '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">' +
+  '<filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.62 0.95" numOctaves="4" stitchTiles="stitch"/>' +
   '<feColorMatrix type="saturate" values="0"/></filter>' +
-  '<rect width="260" height="260" filter="url(#n)" opacity="0.55"/></svg>') + "\")";
+  '<rect width="300" height="300" filter="url(#n)" opacity="0.6"/></svg>') + "\")";
 
-/* ── نقشِ هندسی: شمسه + طاقِ ایرانی، هر دو فقط با خطِ مویی ─────────────── */
-function artwork(H){
-  /* شمسه: ستارهٔ n‌پر با پره‌های شعاعی و حلقه‌های هم‌مرکز — بریده با لبهٔ کادر */
-  const shamsa = (cx, cy, r, n, step) => {
-    const P = k => [cx + r*Math.cos(-Math.PI/2 + k*2*Math.PI/n),
-                    cy + r*Math.sin(-Math.PI/2 + k*2*Math.PI/n)];
-    let d = '';
-    for (let s = 0; s < step; s++){          /* چند ستارهٔ درهم‌بافته = گره */
-      let k = s, path = '';
-      do { const [x,y] = P(k); path += (path ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
-           k = (k + step) % n; } while (k !== s);
-      d += path + 'Z';
-    }
-    const spokes = Array.from({length:n}, (_,k) => {
-      const [x,y] = P(k);
-      return `M${cx} ${cy}L${x.toFixed(1)} ${y.toFixed(1)}`;
-    }).join('');
-    return `<path d="${d}"/><path d="${spokes}" opacity=".45"/>` +
-           [1,.74,.5,.26].map(f => `<circle cx="${cx}" cy="${cy}" r="${(r*f).toFixed(1)}"/>`).join('');
-  };
-  /* طاقِ کلیل — هم‌زمان سردرِ ایرانی و قابِ صحنهٔ تئاتر.
-     مختصات با ارتفاعِ همان قطع محاسبه می‌شود تا در هر سه اندازه یک‌جور بنشیند. */
-  const spring = (H * 0.385).toFixed(0), apex = (H * 0.083).toFixed(0),
-        ctrl   = (H * 0.238).toFixed(0), curve = (H * 0.175).toFixed(0);
-  const arch = `M 150 ${H} L 150 ${spring} C 150 ${ctrl} 320 ${curve} 540 ${apex}` +
-               ` C 760 ${curve} 930 ${ctrl} 930 ${spring} L 930 ${H}`;
+/* ── تصویرِ اصلی: طاقِ ایرانی، ماه، کتابِ باز، صندلیِ خالی ────────────────
+   یک تکهٔ کاغذِ زرشکیِ پاره‌شده روی کاغذِ کرم چسبانده شده؛ از طاقِ آن شبِ صحنه
+   پیداست. صحنه در مختصاتِ ۶۸۰ کشیده و بعد به ارتفاعِ دلخواه مقیاس می‌شود. */
+function artwork(HERO){
+  const W = 1080, H = HERO, S = H / 680, CX = 540;
+  const APEX = 178, SPRING = 460, HALF = 322;
+  const T = `translate(${CX} 0) scale(${S.toFixed(4)}) translate(${-CX} 0)`;
+
+  /* طاقِ کلیل: عمود از پاکار، بعد جمع‌شدن به یک نوکِ ملایم */
+  const rise = SPRING - APEX;
+  const arch =
+    `M${CX - HALF} 680 L${CX - HALF} ${SPRING}` +
+    ` C${CX - HALF} ${(SPRING - rise * .52).toFixed(0)}` +
+    ` ${(CX - HALF * .46).toFixed(0)} ${(APEX + rise * .40).toFixed(0)} ${CX} ${APEX}` +
+    ` C${(CX + HALF * .46).toFixed(0)} ${(APEX + rise * .40).toFixed(0)}` +
+    ` ${CX + HALF} ${(SPRING - rise * .52).toFixed(0)} ${CX + HALF} ${SPRING}` +
+    ` L${CX + HALF} 680 Z`;
+
+  /* لبهٔ پاره‌شدهٔ پایینِ تکه‌کاغذ — تصادفیِ ثابت */
+  let seed = 4711;
+  const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  let edge = `M0 0 L${W} 0 L${W} ${(H - 22).toFixed(1)}`;
+  for (let x = W - 24; x >= 0; x -= 24)
+    edge += ` L${x} ${(H - 22 - rnd() * 20).toFixed(1)}`;
+  edge += ' L0 0 Z';
+
+  /* صندلیِ خالی — سایه‌نمای تو‌پُر، مثل مهرِ چاپ */
+  const q = (...p) => `<polygon points="${p.join(' ')}"/>`;
+  const chair = `<g fill="#17306B">
+    ${q('468,432','612,426','612,447','468,453')}
+    ${q('590,428','608,427','602,330','586,331')}
+    ${q('556,430','572,429','566,332','552,333')}
+    ${q('548,332','610,326','610,344','548,350')}
+    ${q('552,372','604,367','604,382','552,387')}
+    ${q('476,446','492,445','484,540','468,540')}
+    ${q('596,444','612,443','622,538','606,538')}
+    ${q('478,482','610,475','610,489','478,496')}
+  </g>`;
+
   return `
-  <svg class="portal" viewBox="0 0 1080 ${H}" preserveAspectRatio="xMidYMid meet" fill="none">
+  <svg viewBox="0 0 ${W} ${H}" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <radialGradient id="beam" cx="50%" cy="6%" r="76%">
-        <stop offset="0%"  stop-color="#C9A46A" stop-opacity=".20"/>
-        <stop offset="52%" stop-color="#C9A46A" stop-opacity=".05"/>
-        <stop offset="100%" stop-color="#C9A46A" stop-opacity="0"/>
-      </radialGradient>
+      <pattern id="tram" width="12" height="12" patternUnits="userSpaceOnUse">
+        <circle cx="6" cy="6" r="2.6" fill="#DE7429"/>
+      </pattern>
+      <pattern id="tramInk" width="13" height="13" patternUnits="userSpaceOnUse">
+        <circle cx="6.5" cy="6.5" r="2.2" fill="#17306B"/>
+      </pattern>
+      <clipPath id="cutArch"><path d="${arch}" transform="${T}"/></clipPath>
+      <clipPath id="cutSheet"><path d="${edge}"/></clipPath>
+      <clipPath id="cutMoonLo"><circle cx="${CX + 126}" cy="428" r="188"/></clipPath>
+      <mask id="holeArch">
+        <rect width="${W}" height="${H}" fill="#fff"/>
+        <path d="${arch}" fill="#000" transform="${T}"/>
+      </mask>
     </defs>
 
-    <path d="${arch}" fill="url(#beam)"/>
-    <g stroke="#C9A46A" stroke-width="1.4" opacity=".34">
-      <path d="${arch}"/>
-      <path d="${arch}" transform="translate(0,30) scale(1,0.978)" opacity=".45"/>
+    <g clip-path="url(#cutSheet)">
+      <!-- شبِ صحنه، از دلِ طاق -->
+      <g transform="${T}"><path d="${arch}" fill="#17306B"/></g>
+
+      <g clip-path="url(#cutArch)">
+        <g transform="${T}">
+          <!-- ماه -->
+          <circle cx="${CX}" cy="372" r="150" fill="#EFDCA8"/>
+          <g clip-path="url(#cutMoonLo)" opacity=".32">
+            <circle cx="${CX}" cy="372" r="150" fill="url(#tramInk)"/>
+          </g>
+          <circle cx="${CX + 10}" cy="381" r="150" fill="none" stroke="#DE7429"
+                  stroke-width="4" opacity=".5"/>
+
+          <!-- کفِ صحنه -->
+          <rect x="0" y="600" width="${W}" height="90" fill="#1E3B84"/>
+          <rect x="0" y="598" width="${W}" height="3" fill="#EFDCA8" opacity=".26"/>
+
+          <!-- کتابِ باز: صحنه‌ای که صندلی روی آن ایستاده -->
+          <ellipse cx="${CX}" cy="584" rx="248" ry="18" fill="#0C1B45" opacity=".55"/>
+          <path d="M322 516 C392 504 466 510 540 534" stroke="#DE7429" stroke-width="4"
+                opacity=".55" transform="translate(9,10)"/>
+          <path d="M540 534 C466 510 392 504 322 516 L322 570 C392 558 466 564 540 588 Z"
+                fill="#FBF4E5" stroke="#17306B" stroke-width="4.5"/>
+          <path d="M540 534 C614 510 688 504 758 516 L758 570 C688 558 614 564 540 588 Z"
+                fill="#FBF4E5" stroke="#17306B" stroke-width="4.5"/>
+          <path d="M540 534 L540 588" stroke="#17306B" stroke-width="4.5"/>
+          <g stroke="#17306B" stroke-width="2.6" opacity=".3">
+            <path d="M540 548 C480 528 422 522 360 530"/>
+            <path d="M540 561 C480 543 422 537 360 545"/>
+            <path d="M540 548 C600 528 658 522 720 530"/>
+            <path d="M540 561 C600 543 658 537 720 545"/>
+          </g>
+
+          ${chair}
+        </g>
+      </g>
+
+      <!-- تکه‌کاغذِ زرشکی با طاقِ بریده -->
+      <rect width="${W}" height="${H}" fill="#A31E2F" mask="url(#holeArch)"/>
+      <g stroke="#6D1421" stroke-width="3.4" opacity=".38">
+        ${Array.from({length:6},(_,i)=>{const x=24+i*34;
+          return `M${x} 16 C${x - 4} ${(H*.36).toFixed(0)} ${x - 10} ${(H*.66).toFixed(0)}` +
+                 ` ${x - 16} ${(H - 28).toFixed(0)}`;}).join('')}
+        ${Array.from({length:6},(_,i)=>{const x=W-24-i*34;
+          return `M${x} 16 C${x + 4} ${(H*.36).toFixed(0)} ${x + 10} ${(H*.66).toFixed(0)}` +
+                 ` ${x + 16} ${(H - 28).toFixed(0)}`;}).join('')}
+      </g>
+      <g opacity=".26" mask="url(#holeArch)">
+        <rect x="0" y="${(H - 170).toFixed(0)}" width="${W}" height="146" fill="url(#tram)"/>
+      </g>
+      <!-- خطِ طاق و خطای عمدیِ ثبتِ رنگ -->
+      <g transform="${T}">
+        <path d="${arch}" fill="none" stroke="#EFDCA8" stroke-width="3" opacity=".5"/>
+        <path d="${arch}" fill="none" stroke="#DE7429" stroke-width="4" opacity=".45"
+              transform="translate(10,11)"/>
+      </g>
     </g>
-
-    <g stroke="#C9A46A" stroke-width="1.15" opacity=".30">${shamsa(-46, H * 0.317, 356, 16, 6)}</g>
-    <g stroke="#1B5E63" stroke-width="1.15" opacity=".45">${shamsa(-46, H * 0.317, 356, 16, 5)}</g>
-
   </svg>`;
 }
 
 function esc(s){ return String(s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
 
-/* ── ساختِ پوستر از روی DATA ─────────────────────────────────────────── */
+/* لبهٔ پاره‌شدهٔ تکه‌کاغذ — تصادفیِ ثابت، تا هر بار یک‌شکل بماند */
+function torn(){
+  let seed = 20250829;
+  const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const pts = ['0% 0%', '100% 0%'];
+  for (let x = 100; x >= 0; x -= 4) pts.push(`${x}% ${(100 - rnd() * 3.6).toFixed(2)}%`);
+  return `polygon(${pts.join(',')})`;
+}
+
 function build(fmt){
   const F = FORMATS[fmt] || FORMATS.post;
   const el = document.getElementById('poster');
+  const padY = F.padY || 0;
   el.className = 'poster' + (F.bleed ? ' bleed' : '');
   el.style.setProperty('--W', F.W);
   el.style.setProperty('--H', F.H);
   el.style.setProperty('--grain', GRAIN);
-  el.style.setProperty('--sideBottom', fmt === 'story' ? 470 : 296);
-  if (F.padY) el.style.setProperty('--padY', `calc(${F.padY} * var(--u))`);
+  el.style.setProperty('--lockUp', F.lockUp);
+  if (F.padB) el.style.setProperty('--padB', F.padB);
 
-  const rows = DATA.rows.filter(r => r.names && r.names.filter(Boolean).length);
-  const when = DATA.when.filter(w => w.value);
+  const groups = DATA.rows.filter(r => r.names && r.names.filter(Boolean).length);
+  const head = groups.slice(0, 1), tail = groups.slice(1);
+  const grp = g => `<div class="grp"><div class="lbl">${esc(g.label)}</div>
+      <div class="names">${g.names.filter(Boolean).map(esc).join('<br>')}</div></div>`;
 
   el.innerHTML = `
-    <div class="grain"></div>
-    <div class="art">${artwork(Math.round(1080 * F.H / F.W))}</div>
-    <div class="vignette"></div>
     <div class="marks">${['0 0','1 0','0 1','1 1'].map(p=>{
       const [x,y] = p.split(' ').map(Number);
       const v = `${x?'right':'left'}:calc(var(--bleed) - 1px);${y?'bottom':'top'}:0;width:1px;height:var(--bleed)`;
@@ -336,87 +365,74 @@ function build(fmt){
       return `<i style="${v}"></i><i style="${h}"></i>`;}).join('')}</div>
 
     <div class="trim">
-      <span class="rail r"></span><span class="rail l"></span>
-      <span class="side">${esc(DATA.spine || '')}</span>
-      <div class="content" id="content">
+      <header class="hero">
+        ${padY ? `<div class="heroTop" style="height:calc(${padY} * var(--u))"></div>` : ''}
+        ${artwork(F.hero)}
+        <div class="masthead" style="top:calc(${padY + 48} * var(--u))">
+          <div class="org">${esc(DATA.organizer)}</div>
+          <div class="ser">${esc(DATA.series)}</div>
+          <div class="orn"></div>
+        </div>
+        ${DATA.edition ? `<div class="edition"
+          style="top:calc(${padY + 50} * var(--u))">${esc(DATA.edition)}</div>` : ''}
+      </header>
 
-        <header class="masthead">
-          <div class="org">
-            <svg class="seal" viewBox="0 0 40 40" fill="none" stroke="#C9A46A" stroke-width="1.6">
-              <circle cx="20" cy="20" r="18.4"/>
-              <path d="M20 4.6 33.9 12.3v15.4L20 35.4 6.1 27.7V12.3z"/>
-              <path d="M13.4 26.4V15.1c4.4-1.9 8.8-1.9 13.2 0v11.3c-4.4-1.9-8.8-1.9-13.2 0z" fill="#C9A46A" fill-opacity=".18"/>
-              <path d="M20 14.2v12.9"/>
-            </svg>
-            <b>${esc(DATA.organizer)}</b>
-          </div>
-          ${DATA.edition ? `<span class="edition">${esc(DATA.edition)}</span>` : ''}
-        </header>
+      <div class="body">
+        <div class="lockup">
+          <h1 class="title" id="title">${esc(DATA.title)}</h1>
+          ${DATA.accent ? `<div class="accent" id="accent">${esc(DATA.accent)}</div>` : ''}
+        </div>
 
-        <section class="hero">
-          <div class="kicker"><span>${esc(DATA.series)}</span></div>
-          <h1 class="title" id="title">${DATA.title}</h1>
-          <div class="title-rule"></div>
-        </section>
-
-        <section class="paper">
+        <section class="patch" id="patch">
           <div class="lbl">${esc(DATA.booksLabel)}</div>
-          <div class="books" id="books">
-            ${DATA.books.filter(Boolean).map(b => `<div class="book">${esc(b)}</div>`).join('')}
-          </div>
+          <div class="books">${DATA.books.filter(Boolean)
+            .map(b => `<div class="book">${esc(b)}</div>`).join('')}</div>
           ${DATA.author ? `<div class="author">${esc(DATA.author)}</div>` : ''}
         </section>
 
-        <div class="spacer sm"></div>
+        <div class="gap s"></div>
 
-        <section class="people">
-          ${rows.map(r => `
-          <div class="prow">
-            <div class="lbl">${esc(r.label)}</div><div class="bar"></div>
-            <div class="names">${r.names.filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('')}</div>
-          </div>`).join('')}
+        <section class="people"${tail.length ? '' : ' style="--peopleCols:1fr"'}>
+          <div>${head.map(grp).join('')}</div>
+          ${tail.length ? `<div class="rule"></div><div>${tail.map(grp).join('')}</div>` : ''}
         </section>
 
-        <div class="spacer"></div>
+        <div class="gap"></div>
 
-        <section>
-          <div class="when" style="--whenCols:${when.length}">
-            ${when.map(w => `<div class="cell"><div class="lbl">${esc(w.label)}</div>
-              <div class="val">${esc(w.value)}</div></div>`).join('')}
-          </div>
-          <div class="address">
-            <span>${esc(DATA.address || '')}</span>
-            ${DATA.entry ? `<span class="entry">${esc(DATA.entry)}</span>` : ''}
-          </div>
+        <section class="when">
+          <div class="date">${esc(DATA.date)}${DATA.time
+            ? `<i>◆</i>ساعت ${esc(DATA.time)}` : ''}</div>
+          ${DATA.venue ? `<div class="venue">${esc(DATA.venue)}</div>` : ''}
+          <div class="addr"><span>${esc(DATA.address || '')}</span>
+            ${DATA.entry ? `<b>${esc(DATA.entry)}</b>` : ''}</div>
         </section>
 
         <footer class="logos">
-          <div class="cap">با همکاری</div>
-          <div class="logobar">
-            ${DATA.logos.map(l => `<div class="slot${l.required ? '' : ' opt'}">
-              <span>${esc(l.name)}${l.required ? '' : '<i>در صورت تأیید</i>'}</span></div>`).join('')}
-          </div>
+          <span class="cap">با همکاری</span>
+          ${DATA.logos.map(l => `<span class="logo${l.required ? '' : ' opt'}">${esc(l.name)}</span>`).join('')}
         </footer>
-
+        ${DATA.latin ? `<div class="latin">${esc(DATA.latin)}</div>` : ''}
       </div>
-    </div>`;
+    </div>
+
+    <div class="paper-tex"></div>
+    <div class="warmth"></div>`;
+
+  document.getElementById('patch').style.clipPath = torn();
 }
 
-/* ── تنظیمِ خودکارِ اندازهٔ حروف: طرح به طولِ متن وابسته نیست ────────────
-   شمارشِ سطرها با Range انجام می‌شود، نه با ارتفاع؛ چون کشیدگی و زیرِ خطِ
-   حروف فارسی ارتفاعِ بلوک را بیش از line-height نشان می‌دهد. */
+/* شمارشِ سطر با Range — ارتفاعِ بلوک به‌خاطر کشیدگیِ حروف فارسی گمراه‌کننده است */
 function lineCount(el){
   const r = document.createRange();
   r.selectNodeContents(el);
-  return new Set([...r.getClientRects()]
-    .filter(b => b.height > 1)
+  return new Set([...r.getClientRects()].filter(b => b.height > 1)
     .map(b => Math.round(b.top))).size || 1;
 }
 function fitText(el, maxPx, minPx, maxLines){
   if (!el) return;
   let lo = minPx, hi = maxPx;
   el.style.fontSize = maxPx + 'px';
-  if (lineCount(el) <= maxLines) { return; }            /* در بزرگ‌ترین اندازه جا می‌شود */
+  if (lineCount(el) <= maxLines) return;
   for (let i = 0; i < 18; i++){
     const mid = (lo + hi) / 2;
     el.style.fontSize = mid + 'px';
@@ -428,29 +444,32 @@ function fitText(el, maxPx, minPx, maxLines){
 async function render(fmt){
   build(fmt);
   await document.fonts.ready;
-  const el = document.getElementById('poster');
-  const u  = parseFloat(getComputedStyle(el).getPropertyValue('--W')) / 1080;
+  const F = FORMATS[fmt] || FORMATS.post;
+  const u = F.W / 1080;
 
-  fitText(document.getElementById('title'), (FORMATS[fmt] || FORMATS.post).title * u, 44 * u, 2);
+  const accent = document.getElementById('accent');
+  fitText(accent, F.accent * u, 54 * u, 1);
+  fitText(document.getElementById('title'),
+          (accent ? F.title : F.title * 1.22) * u, 34 * u, 2);
+
   const books = [...document.querySelectorAll('.book')];
-  const bMax = books.length > 1 ? 46 : 60;
-  books.forEach(b => fitText(b, bMax * u, 26 * u, 2));
+  books.forEach(b => fitText(b, (books.length > 1 ? 46 : 58) * u, 24 * u, 2));
 
-  /* شبکهٔ ایمنی: اگر متنِ یک نشست غیرعادی بلند شد، ستون به‌جای شکستن، کمی جمع می‌شود */
-  const content = document.getElementById('content');
-  const box = content.parentElement;
-  const avail = box.clientHeight - parseFloat(getComputedStyle(box).paddingTop)
-                                 - parseFloat(getComputedStyle(box).paddingBottom);
-  content.style.transform = 'none';
-  if (content.scrollHeight > avail + 1){
-    const k = Math.max(0.82, avail / content.scrollHeight);
-    content.style.transform = `scale(${k})`;
-    content.style.height = (avail / k) + 'px';
+  /* شبکهٔ ایمنی: متنِ غیرعادی بلند، ستون را جمع می‌کند تا چیدمان نشکند */
+  const body = document.querySelector('.body');
+  body.style.transform = 'none';
+  const kids = [...body.children];
+  const inner = kids[kids.length - 1].getBoundingClientRect().bottom
+              - body.getBoundingClientRect().top;
+  const avail = body.clientHeight - parseFloat(getComputedStyle(body).paddingBottom);
+  if (inner > avail + 1){
+    const k = Math.max(0.78, avail / inner);
+    body.style.transformOrigin = 'top center';
+    body.style.transform = `scale(${k})`;
   }
   document.body.dataset.ready = '1';
 }
 
-/* ── نمایش: در مرورگر کوچک می‌شود، در خروجی‌گیری اندازهٔ واقعی ──────────── */
 const P = new URLSearchParams(location.search);
 const FMT = P.get('f') || 'post';
 function fitViewport(){
