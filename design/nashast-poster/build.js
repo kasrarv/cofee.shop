@@ -5,6 +5,7 @@
  *   node build.js                       ← اطلاعاتِ پیش‌فرضِ داخل poster.html
  *   node build.js sessions/mordad.json  ← اطلاعاتِ یک نشستِ مشخص
  *   node build.js sessions/mordad.json --name mordad-29
+ *   node build.js --page poster-b.html --name b     ← جهت‌گیریِ هنریِ دیگر
  *
  * خروجی در پوشهٔ out/ :
  *   ‑ *-post.png    ۱۰۸۰×۱۳۵۰   پستِ اینستاگرام، تلگرام، واتساپ
@@ -17,11 +18,17 @@ const fs = require('fs');
 const path = require('path');
 
 const CHROME = process.env.CHROMIUM_PATH || '/opt/pw-browsers/chromium';
-const PAGE   = 'file://' + path.join(__dirname, 'poster.html');
+const pageIdx = process.argv.indexOf('--page');
+const PAGE   = 'file://' + path.join(__dirname,
+  pageIdx > -1 ? process.argv[pageIdx + 1] : 'poster.html');
 const OUT    = path.join(__dirname, 'out');
 
 const args = process.argv.slice(2);
-const dataFile = args.find(a => !a.startsWith('--'));
+const flagVals = new Set(['--name', '--page'].flatMap(f => {
+  const i = process.argv.indexOf(f);
+  return i > -1 ? [process.argv[i + 1]] : [];
+}));
+const dataFile = args.find(a => !a.startsWith('--') && !flagVals.has(a));
 const nameIdx  = args.indexOf('--name');
 const prefix   = nameIdx > -1 ? args[nameIdx + 1] : 'poster';
 const overrides = dataFile ? JSON.parse(fs.readFileSync(dataFile, 'utf8')) : null;

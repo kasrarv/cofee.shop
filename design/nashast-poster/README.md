@@ -125,13 +125,36 @@ node build.js sessions/mordad.json --name mordad-29    # با اطلاعاتِ �
 (`?f=post` / `?f=story` / `?f=print`)، متن‌ها را ویرایش کنید و با
 Print → Save as PDF خروجی بگیرید.
 
+---
+
+## سه جهت‌گیریِ هنری
+
+سه پیشنهادِ بصری روی همان یک ساختار و همان شیء `DATA` ساخته شده‌اند:
+
+| فایل | جهت | زبانِ بصری |
+|---|---|---|
+| `poster.html` | **الف · صندلی خالی** | تصویرسازیِ روایی، طاقِ ایرانی، چاپِ دستی |
+| `poster-b.html` | **ب · سیاه‌مشق** | تایپوگرافیِ محض، نستعلیق، صفحهٔ نسخهٔ خطی |
+| `poster-c.html` | **ج · کتیبه** | مینیمالِ گالری، پلانِ رنگیِ تخت، کاشیِ گرهِ هشت‌پر |
+
+```bash
+node build.js                                # جهتِ الف
+node build.js --page poster-b.html --name b  # جهتِ ب
+node build.js --page poster-c.html --name c  # جهتِ ج
+```
+
+انتخابِ جهت، انتخابِ ظاهر است نه روشِ کار: قواعدِ انعطاف، اندازهٔ خودکارِ عنوان،
+حذفِ بخش‌های اختیاری و چهار خروجی در هر سه یکسان است.
+
 ## فایل‌ها
 
 ```
-poster.html              الگوی مادر — تصویر، طراحی و متن‌ها
+poster.html              جهتِ الف — صندلی خالی
+poster-b.html            جهتِ ب — سیاه‌مشق
+poster-c.html            جهتِ ج — کتیبه
 poster.standalone.html   همان الگو با فونت‌های جاسازی‌شده (یک فایل، بدون وابستگی)
 build.js                 ساختِ چهار خروجی از روی الگو
-fonts/                   Lalezar · Markazi Text · Vazirmatn (SIL OFL)
+fonts/                   Lalezar · Markazi Text · Vazirmatn · Gulzar (SIL OFL)
 sessions/example.json    نمونهٔ اطلاعاتِ یک نشست
 out/                     خروجی‌ها
 ```

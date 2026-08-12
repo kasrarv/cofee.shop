@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>سیاه‌مشق — پوستر نشست‌های کتاب‌خوانی</title>
+<link rel="stylesheet" href="./fonts/fonts.css">
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   جهت‌گیریِ هنریِ «ب» — سیاه‌مشق
+   ── مفهوم ──────────────────────────────────────────────────────────────
+   پوستر یک صفحهٔ نسخهٔ خطی است: کاغذِ کهنه، مشقِ نستعلیق که روی هم افتاده،
+   و یک مُهرِ شنگرفی در حاشیه. تصویر، خودِ خط است؛ هیچ تصویرسازیِ دیگری نیست.
+   ═════════════════════════════════════════════════════════════════════════ */
+
+:root{
+  --paper:   #EDE3CD;   /* کاغذِ کهنه */
+  --paper-hi:#F7F0E0;   /* روشناییِ میانهٔ صفحه */
+  --ink:     #241C15;   /* مرکّبِ گرم — خط و متن */
+  --sepia:   #7A6244;   /* یادداشتِ حاشیه */
+  --vermil:  #C0392B;   /* شنگرف — مُهر و تأکید */
+  --ochre:   #A8802F;   /* زرِ مات — خطوطِ جدول‌کشی */
+
+  --sans: 'Vazirmatn', system-ui, sans-serif;
+  --serif:'Markazi Text', 'Vazirmatn', serif;
+  --nasta:'Gulzar', 'Markazi Text', serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:#1B1712;overflow:hidden}
+body{display:grid;place-items:center}
+.stage{transform:scale(var(--fit,1));transform-origin:center}
+
+.poster{
+  --u: calc(var(--W) / 1080 * 1px);
+  --bleed:0px;
+  --padX: calc(96 * var(--u));
+  position:relative;overflow:hidden;
+  width:calc(var(--W) * 1px + 2 * var(--bleed));
+  height:calc(var(--H) * 1px + 2 * var(--bleed));
+  background:var(--paper);color:var(--ink);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+}
+.poster.bleed{--bleed:11.34px}
+
+/* کاغذِ کهنه: روشناییِ میانه، لکه‌های چای، الیاف */
+.wash{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(64% 44% at 50% 34%, var(--paper-hi), rgba(247,240,224,0) 72%),
+             radial-gradient(38% 26% at 12% 82%, rgba(122,98,68,.20), rgba(122,98,68,0) 70%),
+             radial-gradient(30% 22% at 92% 16%, rgba(122,98,68,.17), rgba(122,98,68,0) 70%),
+             radial-gradient(26% 18% at 78% 94%, rgba(122,98,68,.14), rgba(122,98,68,0) 72%)}
+.tex{position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.44;
+  background-image:var(--grain);background-size:calc(320 * var(--u)) calc(320 * var(--u))}
+.edge{position:absolute;inset:0;pointer-events:none;
+  box-shadow:inset 0 0 calc(120 * var(--u)) rgba(70,52,30,.24)}
+
+/* جدول‌کشیِ نسخه: دو خطِ زرِ مات که کادرِ کتابت را می‌سازند */
+.rule-frame{position:absolute;inset:calc(46 * var(--u));pointer-events:none;
+  border:1px solid rgba(168,128,47,.42)}
+.rule-frame::after{content:"";position:absolute;inset:calc(7 * var(--u));
+  border:calc(2 * var(--u)) solid rgba(168,128,47,.26)}
+
+.trim{position:absolute;inset:var(--bleed);display:flex;flex-direction:column;
+  padding:calc(84 * var(--u)) var(--padX) calc(var(--padB, 46) * var(--u))}
+.trim > *{flex:0 0 auto}
+.gap{flex:1 1 auto;min-height:calc(6 * var(--u))}
+.gap.s{flex:.6 1 auto}
+
+/* ── سرصفحه: عنوانِ برگزارکننده مثل سرلوحِ نسخه ────────────────────────── */
+.masthead{text-align:center;position:relative;z-index:2}
+.masthead .org{font-size:calc(21 * var(--u));font-weight:600;letter-spacing:.02em}
+.masthead .ser{margin-top:calc(7 * var(--u));font-size:calc(14.5 * var(--u));
+  letter-spacing:.14em;color:var(--sepia)}
+.masthead .orn{margin:calc(12 * var(--u)) auto 0;width:calc(150 * var(--u));height:1px;
+  background:rgba(168,128,47,.55);position:relative}
+.masthead .orn::after{content:"";position:absolute;top:calc(-4 * var(--u));left:50%;
+  width:calc(9 * var(--u));height:calc(9 * var(--u));margin-left:calc(-4.5 * var(--u));
+  background:var(--vermil);transform:rotate(45deg)}
+
+/* ── مشق و عنوان: خط پس‌زمینه است، عنوان روی آن می‌نشیند ─────────────── */
+.mashq{position:relative;margin-top:calc(26 * var(--u))}
+.mashq svg{display:block;width:100%;height:auto}
+.seal{position:absolute;left:calc(-34 * var(--u));top:calc(24 * var(--u));
+  width:calc(112 * var(--u));height:calc(112 * var(--u));transform:rotate(-9deg)}
+.title-wrap{position:absolute;right:calc(-20 * var(--u));left:calc(-20 * var(--u));
+  bottom:calc(6 * var(--u));text-align:right;padding:calc(20 * var(--u));
+  background:radial-gradient(78% 120% at 74% 62%, rgba(247,240,224,.92), rgba(247,240,224,0) 72%)}
+.title{font-family:var(--serif);font-weight:700;line-height:1.02;
+  font-size:calc(104 * var(--u));color:var(--ink)}
+.accent{display:block;margin-top:calc(2 * var(--u));font-family:var(--serif);font-weight:700;
+  line-height:.98;font-size:calc(150 * var(--u));color:var(--vermil)}
+
+/* ── اثر و نویسنده ──────────────────────────────────────────────────── */
+.lbl{font-size:calc(14 * var(--u));font-weight:600;letter-spacing:.2em;color:var(--vermil)}
+.work{margin-top:calc(30 * var(--u));padding-top:calc(18 * var(--u));
+  border-top:1px solid rgba(36,28,21,.28)}
+.book{font-family:var(--serif);font-weight:700;font-size:calc(54 * var(--u));line-height:1.1;
+  margin-top:calc(6 * var(--u))}
+.book + .book{margin-top:calc(4 * var(--u))}
+.author{margin-top:calc(9 * var(--u));font-size:calc(21 * var(--u));font-weight:500;
+  color:var(--sepia)}
+
+/* ── اهالی نشست: مثل حاشیه‌نویسیِ نسخه، برچسب در کنارهٔ سطر ───────────── */
+.people{margin-top:calc(26 * var(--u))}
+.grp{display:grid;grid-template-columns:1fr calc(158 * var(--u));gap:calc(20 * var(--u));
+  align-items:baseline;padding:calc(11 * var(--u)) 0}
+.grp + .grp{border-top:1px dotted rgba(36,28,21,.30)}
+.grp .lbl{text-align:left;letter-spacing:.12em;color:var(--sepia);font-weight:500}
+.names{font-size:calc(28 * var(--u));font-weight:700;line-height:1.4;letter-spacing:-.012em}
+
+/* ── زمان و مکان ────────────────────────────────────────────────────── */
+.when{margin-top:calc(22 * var(--u));padding-top:calc(16 * var(--u));
+  border-top:calc(2 * var(--u)) solid var(--ink)}
+.when .date{font-family:var(--serif);font-weight:700;font-size:calc(44 * var(--u));
+  line-height:1.2;color:var(--ink)}
+.when .date i{font-style:normal;color:var(--vermil);margin:0 calc(12 * var(--u))}
+.when .venue{margin-top:calc(3 * var(--u));font-size:calc(25 * var(--u));font-weight:600}
+.when .addr{margin-top:calc(6 * var(--u));font-size:calc(16 * var(--u));color:var(--sepia);
+  display:flex;gap:calc(15 * var(--u));flex-wrap:wrap}
+.when .addr b{font-weight:600;color:var(--vermil)}
+
+/* ── لوگوها ─────────────────────────────────────────────────────────── */
+.logos{margin-top:calc(20 * var(--u));display:flex;align-items:center;
+  gap:calc(14 * var(--u));flex-wrap:wrap}
+.logos .cap{font-size:calc(12.5 * var(--u));font-weight:600;letter-spacing:.18em;
+  color:rgba(36,28,21,.42);white-space:nowrap}
+.logo{font-size:calc(14.5 * var(--u));font-weight:600;color:rgba(36,28,21,.78);
+  display:flex;align-items:center;gap:calc(14 * var(--u));white-space:nowrap}
+.logo::before{content:"";width:calc(4 * var(--u));height:calc(4 * var(--u));
+  border-radius:50%;background:rgba(168,128,47,.7)}
+.logo.opt{color:rgba(36,28,21,.44)}
+.logo img{height:calc(44 * var(--u));width:auto;display:block}
+.latin{margin-top:calc(10 * var(--u));direction:ltr;text-align:left;
+  font-size:calc(10.5 * var(--u));font-weight:500;letter-spacing:.24em;
+  color:rgba(36,28,21,.34)}
+
+.marks{position:absolute;inset:0;pointer-events:none;display:none}
+.poster.bleed .marks{display:block}
+.marks i{position:absolute;background:rgba(36,28,21,.7)}
+@media print{ html,body{background:#fff;overflow:visible} @page{ size:auto; margin:0 } }
+</style>
+</head>
+<body>
+
+<script>
+/* ✏️ اطلاعاتِ نشست — همان ساختارِ الگوی اصلی */
+const DATA = {
+  organizer: 'کانون نمایشنامه‌نویسان و مترجمان خانه تئاتر',
+  series:    'نشست‌های کتاب‌خوانی، نقد و بررسی آثار نمایشی',
+  edition:   '',
+  title:     'نقد و بررسی کتاب',
+  accent:    '۱۴۰۵',
+  booksLabel:'اثر مورد بررسی',
+  books:     ['[عنوان کتاب اول]', '[عنوان کتاب دوم]'],
+  author:    'نوشته [نام نویسنده / نویسندگان]',
+  rows: [
+    { label:'با حضور و نقد',    names:['[نام منتقد اول]', '[نام منتقد دوم]'] },
+    { label:'رئیس جلسه / مجری', names:['[نام مجری]'] },
+    { label:'مهمان ویژه',       names:['[نام مهمان ویژه]'] },
+  ],
+  date:  'پنجشنبه ۲۹ مرداد ۱۴۰۵',
+  time:  '۱۷:۰۰',
+  venue: 'سالن مشاهیر تئاتر شهر تهران',
+  address:'[آدرس کامل محل برگزاری]',
+  entry: 'ورود برای عموم آزاد است',
+  logos: [
+    { name:'کانون نمایشنامه‌نویسان و مترجمان', required:true  },
+    { name:'خانه تئاتر',                      required:true  },
+    { name:'تئاتر شهر',                       required:true  },
+    { name:'مرکز هنرهای نمایشی',              required:false },
+    { name:'اداره کل هنرهای نمایشی رادیو',    required:false },
+  ],
+  latin: 'IRANIAN PLAYWRIGHTS & TRANSLATORS GUILD · HOUSE OF THEATRE',
+  /* واژه‌هایی که مشق از آن‌ها ساخته می‌شود */
+  mashq: ['نمایش', 'سخن', 'کتاب', 'نقد', 'صحنه'],
+};
+
+const FORMATS = {
+  post:  { W:1080,    H:1350,   art:520, title:104, accent:150 },
+  story: { W:1080,    H:1920,   art:600, title:112, accent:164, padT:210, padB:210 },
+  print: { W:1122.52, H:1587.4, art:560, title:106, accent:154, bleed:true },
+};
+</script>
+
+<div class="stage"><article class="poster" id="poster"></article></div>
+
+<script>
+const GRAIN = "url(\"data:image/svg+xml;utf8," + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320">' +
+  '<filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.55 1.05" numOctaves="4" stitchTiles="stitch"/>' +
+  '<feColorMatrix type="saturate" values="0"/></filter>' +
+  '<rect width="320" height="320" filter="url(#n)" opacity="0.7"/></svg>') + "\")";
+
+/* ── سیاه‌مشق: یک واژه، بارها، روی هم و کمی رو به بالا ──────────────────── */
+function mashq(H){
+  const W = 1080;
+  let seed = 90210;
+  const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const words = DATA.mashq && DATA.mashq.length ? DATA.mashq : ['نمایش'];
+  let out = '';
+  for (let i = 0; i < 26; i++){
+    const w  = words[Math.floor(rnd() * words.length)];
+    const fs = 90 + rnd() * 210;
+    const x  = 120 + rnd() * 980;
+    const y  = 90 + rnd() * (H - 60);
+    const rot= -13 + rnd() * 9;
+    const op = (.05 + rnd() * .13).toFixed(3);
+    out += `<text x="${x.toFixed(0)}" y="${y.toFixed(0)}" font-size="${fs.toFixed(0)}"` +
+           ` opacity="${op}" transform="rotate(${rot.toFixed(1)} ${x.toFixed(0)} ${y.toFixed(0)})">${w}</text>`;
+  }
+  /* دو مشقِ پررنگ‌تر، برای عمق */
+  out += `<text x="880" y="${(H * .40).toFixed(0)}" font-size="290" opacity=".26"` +
+         ` transform="rotate(-9 880 ${(H * .40).toFixed(0)})">${words[0]}</text>`;
+  out += `<text x="620" y="${(H * .82).toFixed(0)}" font-size="200" opacity=".18"` +
+         ` transform="rotate(-7 620 ${(H * .82).toFixed(0)})">${words[words.length > 2 ? 2 : 0]}</text>`;
+
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    <g font-family="Gulzar, serif" fill="#241C15" text-anchor="middle"
+       dominant-baseline="alphabetic">${out}</g>
+  </svg>`;
+}
+
+/* مُهرِ شنگرفی — نشانِ برگزارکننده در حاشیه */
+const SEAL = `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <rect x="4" y="4" width="112" height="112" rx="4" fill="none" stroke="#C0392B" stroke-width="5"/>
+  <rect x="14" y="14" width="92" height="92" rx="2" fill="none" stroke="#C0392B" stroke-width="2"/>
+  <g fill="#C0392B" font-family="Vazirmatn, sans-serif" font-weight="700" text-anchor="middle">
+    <text x="60" y="46" font-size="21">کانون</text>
+    <text x="60" y="72" font-size="15">نمایشنامه‌نویسان</text>
+    <text x="60" y="94" font-size="15">و مترجمان</text>
+  </g></svg>`;
+
+function esc(s){ return String(s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
+
+function build(fmt){
+  const F = FORMATS[fmt] || FORMATS.post;
+  const el = document.getElementById('poster');
+  el.className = 'poster' + (F.bleed ? ' bleed' : '');
+  el.style.setProperty('--W', F.W);
+  el.style.setProperty('--H', F.H);
+  el.style.setProperty('--grain', GRAIN);
+  if (F.padB) el.style.setProperty('--padB', F.padB);
+
+  const groups = DATA.rows.filter(r => r.names && r.names.filter(Boolean).length);
+
+  el.innerHTML = `
+    <div class="wash"></div>
+    <div class="marks">${['0 0','1 0','0 1','1 1'].map(p=>{
+      const [x,y] = p.split(' ').map(Number);
+      const v = `${x?'right':'left'}:calc(var(--bleed) - 1px);${y?'bottom':'top'}:0;width:1px;height:var(--bleed)`;
+      const h = `${y?'bottom':'top'}:calc(var(--bleed) - 1px);${x?'right':'left'}:0;height:1px;width:var(--bleed)`;
+      return `<i style="${v}"></i><i style="${h}"></i>`;}).join('')}</div>
+    <div class="rule-frame"></div>
+
+    <div class="trim"${F.padT ? ` style="padding-top:calc(${F.padT} * var(--u))"` : ''}>
+      <header class="masthead">
+        <div class="org">${esc(DATA.organizer)}</div>
+        <div class="ser">${esc(DATA.series)}</div>
+        <div class="orn"></div>
+      </header>
+
+      <section class="mashq">
+        ${mashq(F.art)}
+        <div class="seal">${SEAL}</div>
+        <div class="title-wrap">
+          <h1 class="title" id="title">${esc(DATA.title)}</h1>
+          ${DATA.accent ? `<span class="accent" id="accent">${esc(DATA.accent)}</span>` : ''}
+        </div>
+      </section>
+
+      <section class="work">
+        <div class="lbl">${esc(DATA.booksLabel)}</div>
+        ${DATA.books.filter(Boolean).map(b => `<div class="book">${esc(b)}</div>`).join('')}
+        ${DATA.author ? `<div class="author">${esc(DATA.author)}</div>` : ''}
+      </section>
+
+      <div class="gap s"></div>
+
+      <section class="people">
+        ${groups.map(g => `<div class="grp"><div class="names">${
+          g.names.filter(Boolean).map(esc).join('<br>')}</div>
+          <div class="lbl">${esc(g.label)}</div></div>`).join('')}
+      </section>
+
+      <div class="gap"></div>
+
+      <section class="when">
+        <div class="date">${esc(DATA.date)}${DATA.time ? `<i>◆</i>ساعت ${esc(DATA.time)}` : ''}</div>
+        ${DATA.venue ? `<div class="venue">${esc(DATA.venue)}</div>` : ''}
+        <div class="addr"><span>${esc(DATA.address || '')}</span>
+          ${DATA.entry ? `<b>${esc(DATA.entry)}</b>` : ''}</div>
+      </section>
+
+      <footer class="logos">
+        <span class="cap">با همکاری</span>
+        ${DATA.logos.map(l => `<span class="logo${l.required ? '' : ' opt'}">${esc(l.name)}</span>`).join('')}
+      </footer>
+      ${DATA.latin ? `<div class="latin">${esc(DATA.latin)}</div>` : ''}
+    </div>
+
+    <div class="tex"></div><div class="edge"></div>`;
+}
+
+function lineCount(el){
+  const r = document.createRange(); r.selectNodeContents(el);
+  return new Set([...r.getClientRects()].filter(b => b.height > 1)
+    .map(b => Math.round(b.top))).size || 1;
+}
+function fitText(el, maxPx, minPx, maxLines){
+  if (!el) return;
+  let lo = minPx, hi = maxPx;
+  el.style.fontSize = maxPx + 'px';
+  if (lineCount(el) <= maxLines) return;
+  for (let i = 0; i < 18; i++){
+    const mid = (lo + hi) / 2;
+    el.style.fontSize = mid + 'px';
+    if (lineCount(el) <= maxLines) lo = mid; else hi = mid;
+  }
+  el.style.fontSize = lo + 'px';
+}
+
+async function render(fmt){
+  build(fmt);
+  await document.fonts.ready;
+  const F = FORMATS[fmt] || FORMATS.post;
+  const u = F.W / 1080;
+  fitText(document.getElementById('accent'), F.accent * u, 56 * u, 1);
+  fitText(document.getElementById('title'), F.title * u, 40 * u, 2);
+  const books = [...document.querySelectorAll('.book')];
+  books.forEach(b => fitText(b, (books.length > 1 ? 46 : 58) * u, 24 * u, 2));
+
+  const trim = document.querySelector('.trim');
+  trim.style.transform = 'none';
+  const kids = [...trim.children];
+  const inner = kids[kids.length - 1].getBoundingClientRect().bottom
+              - trim.getBoundingClientRect().top - parseFloat(getComputedStyle(trim).paddingTop);
+  const avail = trim.clientHeight - parseFloat(getComputedStyle(trim).paddingTop)
+                                  - parseFloat(getComputedStyle(trim).paddingBottom);
+  if (inner > avail + 1){
+    const k = Math.max(0.78, avail / inner);
+    trim.style.transformOrigin = 'top center';
+    trim.style.transform = `scale(${k})`;
+  }
+  document.body.dataset.ready = '1';
+}
+
+const P = new URLSearchParams(location.search);
+const FMT = P.get('f') || 'post';
+function fitViewport(){
+  if (P.get('fit') === '0'){ document.querySelector('.stage').style.setProperty('--fit', 1); return; }
+  const F = FORMATS[FMT] || FORMATS.post;
+  const b = F.bleed ? 22.68 : 0;
+  const k = Math.min(1, (innerWidth - 24) / (F.W + b), (innerHeight - 24) / (F.H + b));
+  document.querySelector('.stage').style.setProperty('--fit', k);
+}
+addEventListener('resize', fitViewport);
+render(FMT).then(fitViewport);
+</script>
+</body>
+</html>
